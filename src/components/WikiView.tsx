@@ -64,10 +64,11 @@ function SectionHeader({ tag, title, subtitle }: { tag: string; title: string; s
 }
 
 function SourceLine({ ids }: { ids?: string[] }) {
+  const t = useT();
   if (!ids || ids.length === 0) return null;
   return (
     <p className="source-note">
-      Quellen: {ids.map(id => {
+      {t('Quellen', 'Sources')}: {ids.map(id => {
         const s = WIKI_SOURCES.find(x => x.id === id);
         return s ? (s.author ? `${s.author} (${s.year || ''})` : s.title) : id;
       }).join(' · ')}
@@ -139,10 +140,11 @@ type WikiPage =
 const STAGES_LIST: Array<'aussaat' | 'keimling' | 'jungpflanze' | 'reif'> = ['aussaat', 'keimling', 'jungpflanze', 'reif'];
 
 function PlantGrowthStageRow({ plantId }: { plantId: string }) {
+  const t = useT();
   const iconKey = resolveIconKey(plantId);
   return (
     <div className="mb-6 rounded-xl p-4" style={{ background: 'var(--c-card)', border: '1px solid var(--c-border)' }}>
-      <div className="label mb-3" style={{ color: GREEN, letterSpacing: '0.12em' }}>Wachstumsphasen</div>
+      <div className="label mb-3" style={{ color: GREEN, letterSpacing: '0.12em' }}>{t('Wachstumsphasen', 'Growth stages')}</div>
       <div className="flex gap-5 flex-wrap">
         {STAGES_LIST.map(stage => (
           <div key={stage} className="flex flex-col items-center gap-2">
@@ -158,6 +160,7 @@ function PlantGrowthStageRow({ plantId }: { plantId: string }) {
 function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
   plant: WikiPlant; onNavigate: (p: WikiPage) => void; onSelectGrowth?: (id: string) => void;
 }) {
+  const t = useT();
   const img = WIKI_IMAGE_MAP[plant.id];
   const crossLinks = WIKI_CROSS_LINKS[plant.id] || [];
   const relatedPlants = (plant.relatedIds || []).map(rid => WIKI_PLANTS.find(p => p.id === rid)).filter(Boolean) as WikiPlant[];
@@ -165,8 +168,8 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Pflanzenlexikon', onClick: () => onNavigate({ view: 'pflanzen' }) },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Pflanzenlexikon', 'Plant encyclopedia'), onClick: () => onNavigate({ view: 'pflanzen' }) },
         { label: plant.name, color: AMBER },
       ]} />
 
@@ -182,16 +185,16 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
             <Tag label={plant.water} color={CYAN} />
             <Tag label={plant.nutrient} color={GREEN} />
             {plant.optimalTemp && <Tag label={plant.optimalTemp} color={RED} />}
-            {plant.frostHardy && <Tag label="Frosthart" color={CYAN} />}
-            {plant.glashaus && <Tag label="Glashaus" color={CYAN} />}
-            {plant.balcony && <Tag label="Balkon" color={GREEN} />}
+            {plant.frostHardy && <Tag label={t('Frosthart', 'Frost-hardy')} color={CYAN} />}
+            {plant.glashaus && <Tag label={t('Glashaus', 'Greenhouse')} color={CYAN} />}
+            {plant.balcony && <Tag label={t('Balkon', 'Balcony')} color={GREEN} />}
           </div>
           <div className="info-box info-box-green rounded-[12px] p-[14px]">
             <div className="label label-green mb-1 flex items-center gap-1.5">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
               </svg>
-              EINSTEIGER-TIPP
+              {t('EINSTEIGER-TIPP', 'BEGINNER TIP')}
             </div>
             <p className="body">{plant.beginnerTip}</p>
           </div>
@@ -209,20 +212,20 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
       <PlantGrowthStageRow plantId={plant.id} />
 
       <div className="flex flex-col gap-[10px]">
-        <Collapsible title="Aussaat & Pflanzung" subtitle={`${plant.sowing} · ${plant.planting}`} color={GREEN} defaultOpen>
+        <Collapsible title={t('Aussaat & Pflanzung', 'Sowing & planting')} subtitle={`${plant.sowing} · ${plant.planting}`} color={GREEN} defaultOpen>
           <div className="two-col mt-3">
             <div>
-              <div className="label label-amber mb-1">Aussaat</div>
+              <div className="label label-amber mb-1">{t('Aussaat', 'Sowing')}</div>
               <p className="body">{plant.sowing}</p>
             </div>
             <div>
-              <div className="label label-cyan mb-1">Auspflanzen</div>
+              <div className="label label-cyan mb-1">{t('Auspflanzen', 'Planting out')}</div>
               <p className="body">{plant.planting}</p>
             </div>
           </div>
         </Collapsible>
 
-        <Collapsible title="Schritt für Schritt" subtitle={`${plant.steps.length} Schritte bis zur Ernte`} color={AMBER} defaultOpen>
+        <Collapsible title={t('Schritt für Schritt', 'Step by step')} subtitle={t(`${plant.steps.length} Schritte bis zur Ernte`, `${plant.steps.length} steps to harvest`)} color={AMBER} defaultOpen>
           <div className="mt-3">
             {plant.steps.map((step, i) => (
               <div key={i} className="flex gap-3 mb-[10px] items-start">
@@ -233,33 +236,33 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
           </div>
         </Collapsible>
 
-        <Collapsible title="Ernte" subtitle={plant.harvest} color={RED}>
+        <Collapsible title={t('Ernte', 'Harvest')} subtitle={plant.harvest} color={RED}>
           <p className="body mt-3">{plant.harvest}</p>
         </Collapsible>
 
-        <Collapsible title="Mischkultur: Freunde & Feinde" color={GREEN}>
+        <Collapsible title={t('Mischkultur: Freunde & Feinde', 'Companion planting: friends & foes')} color={GREEN}>
           <div className="two-col mt-3">
             <div>
-              <div className="label label-green mb-1.5">Gute Nachbarn</div>
+              <div className="label label-green mb-1.5">{t('Gute Nachbarn', 'Good neighbours')}</div>
               <p className="body"><PlantNameList names={plant.partners} /></p>
             </div>
             <div>
-              <div className="label label-red mb-1.5">Schlechte Nachbarn</div>
+              <div className="label label-red mb-1.5">{t('Schlechte Nachbarn', 'Bad neighbours')}</div>
               <p className="body"><PlantNameList names={plant.enemies} /></p>
             </div>
           </div>
         </Collapsible>
 
-        <Collapsible title="Probleme & Krankheiten" color={RED}>
+        <Collapsible title={t('Probleme & Krankheiten', 'Problems & diseases')} color={RED}>
           <p className="body mt-3">{plant.issues}</p>
         </Collapsible>
 
-        <Collapsible title="Empfohlene Sorten" subtitle="Für das österreichische Klima" color={AMBER}>
+        <Collapsible title={t('Empfohlene Sorten', 'Recommended varieties')} subtitle={t('Für das österreichische Klima', 'For the Austrian climate')} color={AMBER}>
           <p className="body mt-3">{plant.sorts}</p>
         </Collapsible>
 
         {plant.furtherReading && plant.furtherReading.length > 0 && (
-          <Collapsible title="Weiterführende Literatur" color={CYAN}>
+          <Collapsible title={t('Weiterführende Literatur', 'Further reading')} color={CYAN}>
             <div className="mt-3">
               {plant.furtherReading.map((ref, i) => (
                 <p key={i} className="body-sm mb-1.5 pl-3" style={{ borderLeft: `2px solid ${CYAN}33` }}>
@@ -273,7 +276,7 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
 
       {crossLinks.length > 0 && (
         <div className="mt-5">
-          <div className="section-overline text-water">Verknüpfte Wiki-Seiten</div>
+          <div className="section-overline text-water">{t('Verknüpfte Wiki-Seiten', 'Linked wiki pages')}</div>
           <div className="flex flex-wrap gap-1.5">
             {crossLinks.map((link, i) => (
               <LinkButton key={i} label={link.label} onClick={() => {
@@ -295,7 +298,7 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
 
       {relatedPlants.length > 0 && (
         <div className="mt-5">
-          <div className="section-overline text-primary">Verwandte Pflanzen</div>
+          <div className="section-overline text-primary">{t('Verwandte Pflanzen', 'Related plants')}</div>
           <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
             {relatedPlants.map(rp => (
               <button
@@ -321,7 +324,7 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
       <div className="flex items-center gap-[10px] mt-6 flex-wrap">
         {onSelectGrowth && (
           <button onClick={() => onSelectGrowth(plant.id)} className="btn-primary">
-            Wachstum ansehen
+            {t('Wachstum ansehen', 'View growth')}
           </button>
         )}
       </div>
@@ -332,23 +335,24 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
 
 // ── Month Detail Page ─────────────────────────────────────────────────────────
 function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   const seasonColor = month.month >= 3 && month.month <= 5 ? GREEN
     : month.month >= 6 && month.month <= 8 ? AMBER
     : month.month >= 9 && month.month <= 11 ? RED : CYAN;
   const sections = [
-    { label: 'Vorkultur (innen)',    items: month.sowIndoor,  color: AMBER, icon: 'M12 2v4M6.34 6.34L8.46 8.46M2 12h4M6.34 17.66l2.12-2.12M12 18v4' },
-    { label: 'Direktsaat (Freiland)', items: month.sowOutdoor, color: GREEN, icon: 'M12 22V12M5 12C5 8 8 5 12 5s7 3 7 7' },
-    { label: 'Auspflanzen',          items: month.plant,      color: CYAN,  icon: 'M12 22V2M3 9l9-7 9 7' },
-    { label: 'Ernten',               items: month.harvest,    color: RED,   icon: 'M6 3v12M18 9a6 6 0 01-12 0' },
-    { label: 'Glashaus',             items: month.glashaus,   color: CYAN,  icon: 'M3 21V7l9-5 9 5v14' },
-    { label: 'Pflege',               items: month.care,       color: 'var(--c-sub)', icon: 'M12 2.69l5.66 5.66a8 8 0 11-11.31 0z' },
+    { label: t('Vorkultur (innen)', 'Indoor sowing'),    items: month.sowIndoor,  color: AMBER, icon: 'M12 2v4M6.34 6.34L8.46 8.46M2 12h4M6.34 17.66l2.12-2.12M12 18v4' },
+    { label: t('Direktsaat (Freiland)', 'Direct sowing (outdoors)'), items: month.sowOutdoor, color: GREEN, icon: 'M12 22V12M5 12C5 8 8 5 12 5s7 3 7 7' },
+    { label: t('Auspflanzen', 'Planting out'),          items: month.plant,      color: CYAN,  icon: 'M12 22V2M3 9l9-7 9 7' },
+    { label: t('Ernten', 'Harvesting'),               items: month.harvest,    color: RED,   icon: 'M6 3v12M18 9a6 6 0 01-12 0' },
+    { label: t('Glashaus', 'Greenhouse'),             items: month.glashaus,   color: CYAN,  icon: 'M3 21V7l9-5 9 5v14' },
+    { label: t('Pflege', 'Care'),       items: month.care,       color: 'var(--c-sub)', icon: 'M12 2.69l5.66 5.66a8 8 0 11-11.31 0z' },
   ];
 
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Monatskalender', onClick: () => onNavigate({ view: 'kalender' }) },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Monatskalender', 'Monthly calendar'), onClick: () => onNavigate({ view: 'kalender' }) },
         { label: month.name, color: seasonColor },
       ]} />
 
@@ -366,8 +370,8 @@ function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate:
           </div>
           <div className="text-right">
             <div className="mono font-bold text-amber">{month.avgTempHigh}° / {month.avgTempLow}°C</div>
-            <div className="mono-sm text-water">{month.sunHours}h Sonne</div>
-            <div className="mono-sm text-water">{month.rainfall} mm Regen</div>
+            <div className="mono-sm text-water">{month.sunHours}{t('h Sonne', 'h sun')}</div>
+            <div className="mono-sm text-water">{month.rainfall}{t(' mm Regen', ' mm rain')}</div>
           </div>
         </div>
         <p className="body text-primary italic mt-[14px]">{month.motto}</p>
@@ -375,7 +379,7 @@ function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate:
 
       <div className="flex flex-col gap-[10px]">
         {sections.filter(s => s.items.length > 0).map((section, i) => (
-          <Collapsible key={i} title={section.label} subtitle={`${section.items.length} Aufgaben`} color={section.color} defaultOpen={i < 3}>
+          <Collapsible key={i} title={section.label} subtitle={t(`${section.items.length} Aufgaben`, `${section.items.length} tasks`)} color={section.color} defaultOpen={i < 3}>
             <div className="mt-[10px]">
               {section.items.map((item: string, j: number) => (
                 <div key={j} className="flex gap-2 items-start mb-2">
@@ -390,7 +394,7 @@ function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate:
 
       {month.notes.length > 0 && (
         <div className="info-box info-box-amber rounded-[14px] p-[18px] mt-4">
-          <div className="label label-amber mb-2">Hinweise</div>
+          <div className="label label-amber mb-2">{t('Hinweise', 'Notes')}</div>
           {month.notes.map((note, i) => (
             <p key={i} className="body mb-1.5">{note}</p>
           ))}
@@ -596,20 +600,21 @@ function PflanzenLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
 }
 
 function KalenderLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   const seasonGroups = [
-    { label: 'Frühling', months: [3, 4, 5], color: GREEN },
-    { label: 'Sommer',   months: [6, 7, 8], color: AMBER },
-    { label: 'Herbst',   months: [9, 10, 11], color: RED },
-    { label: 'Winter',   months: [12, 1, 2], color: CYAN },
+    { label: t('Frühling', 'Spring'), months: [3, 4, 5], color: GREEN },
+    { label: t('Sommer', 'Summer'),   months: [6, 7, 8], color: AMBER },
+    { label: t('Herbst', 'Autumn'),   months: [9, 10, 11], color: RED },
+    { label: t('Winter', 'Winter'),   months: [12, 1, 2], color: CYAN },
   ];
 
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Monatskalender', color: CYAN },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Monatskalender', 'Monthly calendar'), color: CYAN },
       ]} />
-      <SectionHeader tag="Monatskalender" title="12 Monate im Garten" subtitle="Monat für Monat: was wann getan wird. Klimadaten von GeoSphere Austria (ZAMG), Anbauempfehlungen von LK NÖ, HBLFA Schönbrunn, Heistinger/Arche Noah." />
+      <SectionHeader tag={t('Monatskalender', 'Monthly calendar')} title={t('12 Monate im Garten', '12 months in the garden')} subtitle={t('Monat für Monat: was wann getan wird. Klimadaten von GeoSphere Austria (ZAMG), Anbauempfehlungen von LK NÖ, HBLFA Schönbrunn, Heistinger/Arche Noah.', 'Month by month: what to do and when. Climate data from GeoSphere Austria (ZAMG), growing recommendations from LK NÖ, HBLFA Schönbrunn, Heistinger/Arche Noah.')} />
 
       {seasonGroups.map(group => (
         <div key={group.label} className="mb-5">
@@ -640,7 +645,7 @@ function KalenderLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
                     </div>
                     <div className="text-right">
                       <div className="mono text-amber">{month.avgTempHigh}°C</div>
-                      <div className="mono-sm">{taskCount} Aufgaben</div>
+                      <div className="mono-sm">{taskCount} {t('Aufgaben', 'tasks')}</div>
                     </div>
                   </div>
                   <p className="body-sm italic mt-2 text-primary">{month.motto}</p>
@@ -655,37 +660,38 @@ function KalenderLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
 }
 
 export function SoilInfographic() {
+  const t = useT();
   const cardBg = '#132234';
   const textFill = '#EDE6D6';
   const dimFill = '#1A3050';
   return (
     <div>
-      <div className="label label-amber mb-2" style={{ letterSpacing: '0.2em' }}>Infografik 01</div>
-      <h3 className="font-sans text-[1.375rem] text-text mb-4 font-semibold">Was ist Boden?</h3>
+      <div className="label label-amber mb-2" style={{ letterSpacing: '0.2em' }}>{t('Infografik 01', 'Infographic 01')}</div>
+      <h3 className="font-sans text-[1.375rem] text-text mb-4 font-semibold">{t('Was ist Boden?', 'What is soil?')}</h3>
       <svg viewBox="0 0 400 240" className="w-full max-w-[480px] block">
         <rect x="0" y="0" width="400" height="60" fill={cardBg} opacity="0.5"/>
         <circle cx="60" cy="30" r="12" fill={AMBER}/>
         {[0,30,60,90,120,150,180,210,240,270,300,330].map((angle, i) => (
           <line key={i} x1={60+14*Math.cos(angle*Math.PI/180)} y1={30+14*Math.sin(angle*Math.PI/180)} x2={60+20*Math.cos(angle*Math.PI/180)} y2={30+20*Math.sin(angle*Math.PI/180)} stroke={AMBER} strokeWidth="2" strokeLinecap="round"/>
         ))}
-        <text x="90" y="25" fontSize="10" fill={CYAN} fontFamily="monospace">Luft & Licht</text>
+        <text x="90" y="25" fontSize="10" fill={CYAN} fontFamily="monospace">{t('Luft & Licht', 'Air & light')}</text>
         <rect x="0" y="58" width="400" height="12" fill={GREEN} opacity="0.6"/>
-        <text x="205" y="68" fontSize="8" fill={dimFill} fontFamily="monospace" textAnchor="middle">RASEN / MULCH</text>
+        <text x="205" y="68" fontSize="8" fill={dimFill} fontFamily="monospace" textAnchor="middle">{t('RASEN / MULCH', 'LAWN / MULCH')}</text>
         <rect x="0" y="70" width="400" height="80" fill={textFill}/>
-        <text x="182" y="108" fontSize="10" fill={textFill} fontFamily="monospace" fontWeight="bold">MUTTERBODEN</text>
-        <text x="182" y="119" fontSize="9" fill={dimFill} fontFamily="monospace">20-30 cm Humus Lebewesen</text>
+        <text x="182" y="108" fontSize="10" fill={textFill} fontFamily="monospace" fontWeight="bold">{t('MUTTERBODEN', 'TOPSOIL')}</text>
+        <text x="182" y="119" fontSize="9" fill={dimFill} fontFamily="monospace">{t('20-30 cm Humus Lebewesen', '20–30 cm humus, organisms')}</text>
         <rect x="0" y="150" width="400" height="55" fill={RED}/>
-        <text x="182" y="173" fontSize="10" fill={textFill} fontFamily="monospace" fontWeight="bold">UNTERBODEN</text>
-        <text x="182" y="184" fontSize="9" fill={dimFill} fontFamily="monospace">Mineralien, kompakt</text>
+        <text x="182" y="173" fontSize="10" fill={textFill} fontFamily="monospace" fontWeight="bold">{t('UNTERBODEN', 'SUBSOIL')}</text>
+        <text x="182" y="184" fontSize="9" fill={dimFill} fontFamily="monospace">{t('Mineralien, kompakt', 'Minerals, compact')}</text>
         <rect x="0" y="205" width="400" height="35" fill="#93c5fd99"/>
-        <text x="200" y="225" fontSize="9" fill={textFill} fontFamily="monospace" textAnchor="middle">UNTERGRUND / GESTEIN</text>
+        <text x="200" y="225" fontSize="9" fill={textFill} fontFamily="monospace" textAnchor="middle">{t('UNTERGRUND / GESTEIN', 'BEDROCK / SUBSTRATE')}</text>
       </svg>
       <div className="flex flex-col gap-1.5 mt-3">
         {[
-          { label: 'Mutterboden', text: 'Dein Schatz: dunkel, krumelig, durchwurzelt. Darin leben Milliarden Bakterien, Pilze, Regenwurmer.' },
-          { label: 'pH-Wert 6,0-7,0', text: 'Ideal für Gemüse. Tendiert zu leicht kalkhaltig - gut für Tomate + Paprika.' },
-          { label: 'Was hilft', text: 'Kompost, Mulch, Grundungung, Regenwurmer respektieren.' },
-          { label: 'Was schadet', text: 'Tiefes Umgraben (zerstort Schichten) + Pestizide (totet Nutzlinge).' },
+          { label: t('Mutterboden', 'Topsoil'), text: t('Dein Schatz: dunkel, krumelig, durchwurzelt. Darin leben Milliarden Bakterien, Pilze, Regenwurmer.', 'Your treasure: dark, crumbly, full of roots. Home to billions of bacteria, fungi and earthworms.') },
+          { label: t('pH-Wert 6,0-7,0', 'pH value 6.0–7.0'), text: t('Ideal für Gemüse. Tendiert zu leicht kalkhaltig - gut für Tomate + Paprika.', 'Ideal for vegetables. Tends slightly chalky · good for tomato + bell pepper.') },
+          { label: t('Was hilft', 'What helps'), text: t('Kompost, Mulch, Grundungung, Regenwurmer respektieren.', 'Compost, mulch, green manure, and respecting earthworms.') },
+          { label: t('Was schadet', 'What harms'), text: t('Tiefes Umgraben (zerstort Schichten) + Pestizide (totet Nutzlinge).', 'Deep digging (destroys the layers) and pesticides (kill beneficial creatures).') },
         ].map((p, i) => (
           <p key={i} className="body"><strong>{p.label}:</strong> {p.text}</p>
         ))}
@@ -696,15 +702,16 @@ export function SoilInfographic() {
 
 // ── Article Detail Page ────────────────────────────────────────────────────
 function ArticleDetailPage({ article, onNavigate }: { article: WikiArticle; onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   const related = (article.relatedArticles || []).map(id => WIKI_ARTICLE_MAP[id]).filter(Boolean);
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Grundlagen', onClick: () => onNavigate({ view: 'grundlagen' }) },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Grundlagen', 'Basics'), onClick: () => onNavigate({ view: 'grundlagen' }) },
         { label: article.title, color: article.color },
       ]} />
-      <SectionHeader tag="Wissen" title={article.title} subtitle={article.subtitle} />
+      <SectionHeader tag={t('Wissen', 'Knowledge')} title={article.title} subtitle={article.subtitle} />
 
       {ARTICLE_IMAGES[article.id] && (
         <div className="rounded-xl overflow-hidden mb-6" style={{ height: 280 }}>
@@ -735,14 +742,14 @@ function ArticleDetailPage({ article, onNavigate }: { article: WikiArticle; onNa
 
               {section.tip && (
                 <div className="info-box info-box-green rounded-[10px] p-[14px] mb-[10px]">
-                  <div className="label label-green mb-1">Praxis-Tipp</div>
+                  <div className="label label-green mb-1">{t('Praxis-Tipp', 'Practical tip')}</div>
                   <p className="body">{section.tip}</p>
                 </div>
               )}
 
               {section.warning && (
                 <div className="info-box info-box-red rounded-[10px] p-[14px] mb-[10px]">
-                  <div className="label label-red mb-1">Achtung</div>
+                  <div className="label label-red mb-1">{t('Achtung', 'Caution')}</div>
                   <p className="body">{section.warning}</p>
                 </div>
               )}
@@ -757,7 +764,7 @@ function ArticleDetailPage({ article, onNavigate }: { article: WikiArticle; onNa
 
       {related.length > 0 && (
         <div className="mt-6">
-          <div className="section-overline text-water">Weiterlesen</div>
+          <div className="section-overline text-water">{t('Weiterlesen', 'Read on')}</div>
           <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
             {related.map(ra => (
               <button
@@ -779,13 +786,14 @@ function ArticleDetailPage({ article, onNavigate }: { article: WikiArticle; onNa
 }
 
 function GrundlagenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Grundlagen', color: GREEN },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Grundlagen', 'Basics'), color: GREEN },
       ]} />
-      <SectionHeader tag="Grundlagen" title="Alles was du wissen musst" subtitle="Boden, Wasser, Kompost, Düngung, Pflanzenschutz, Anzucht und Saatgut. Jeder Artikel ist ein vollständiger Leitfaden mit wissenschaftlichen Quellen." />
+      <SectionHeader tag={t('Grundlagen', 'Basics')} title={t('Alles was du wissen musst', 'Everything you need to know')} subtitle={t('Boden, Wasser, Kompost, Düngung, Pflanzenschutz, Anzucht und Saatgut. Jeder Artikel ist ein vollständiger Leitfaden mit wissenschaftlichen Quellen.', 'Soil, water, compost, fertilising, plant protection, propagation and seed. Each article is a complete guide with scientific sources.')} />
 
       <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
         {WIKI_ARTICLES.map(article => {
@@ -802,7 +810,7 @@ function GrundlagenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
                   <img src={img} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%' }} />
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, var(--c-card) 100%)' }} />
                   <span className="mono-sm px-2 py-0.5 rounded-lg" style={{ position: 'absolute', top: 8, right: 8, color: article.color, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}>
-                    {article.sections.length} Kapitel
+                    {article.sections.length} {t('Kapitel', 'chapters')}
                   </span>
                 </div>
               )}
@@ -815,7 +823,7 @@ function GrundlagenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
                       </svg>
                     </div>
                     <span className="mono-sm px-2 py-0.5 rounded-lg" style={{ color: article.color, background: article.color + '12' }}>
-                      {article.sections.length} Kapitel
+                      {article.sections.length} {t('Kapitel', 'chapters')}
                     </span>
                   </div>
                 )}
@@ -837,16 +845,17 @@ function GrundlagenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 }
 
 function GlashausPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Glashaus', color: CYAN },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Glashaus', 'Greenhouse'), color: CYAN },
       ]} />
-      <SectionHeader tag="Glashaus-Leitfaden" title={GLASHAUS_GUIDE.title} subtitle={GLASHAUS_GUIDE.subtitle} />
+      <SectionHeader tag={t('Glashaus-Leitfaden', 'Greenhouse guide')} title={GLASHAUS_GUIDE.title} subtitle={GLASHAUS_GUIDE.subtitle} />
 
       <div className="flex flex-col gap-[10px]">
-        <Collapsible title="Warum ein Glashaus?" subtitle="Fakten und Forschungsergebnisse" color={CYAN} defaultOpen>
+        <Collapsible title={t('Warum ein Glashaus?', 'Why a greenhouse?')} subtitle={t('Fakten und Forschungsergebnisse', 'Facts and research findings')} color={CYAN} defaultOpen>
           <div className="mt-3">
             {GLASHAUS_GUIDE.keyFacts.map((fact, i) => (
               <div key={i} className="flex gap-2 mb-2">
@@ -858,7 +867,7 @@ function GlashausPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
           </div>
         </Collapsible>
 
-        <Collapsible title="Glashaus-Kulturen" subtitle={`${GLASHAUS_GUIDE.plants.length} Pflanzen mit Saison und Vorteilen`} color={GREEN} defaultOpen>
+        <Collapsible title={t('Glashaus-Kulturen', 'Greenhouse crops')} subtitle={t(`${GLASHAUS_GUIDE.plants.length} Pflanzen mit Saison und Vorteilen`, `${GLASHAUS_GUIDE.plants.length} plants with season and benefits`)} color={GREEN} defaultOpen>
           <div className="grid gap-2 mt-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
             {GLASHAUS_GUIDE.plants.map((p, i) => (
               <button
@@ -868,7 +877,7 @@ function GlashausPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
               >
                 <div className="flex justify-between items-center mb-1">
                   <h4 className="card-title">{p.name}</h4>
-                  <Tag label={`min. ${p.tempMin} C`} color={AMBER} />
+                  <Tag label={t(`min. ${p.tempMin} C`, `min. ${p.tempMin} C`)} color={AMBER} />
                 </div>
                 <div className="label label-cyan mb-1">{p.season}</div>
                 <p className="body-sm text-primary">{p.advantage}</p>
@@ -877,7 +886,7 @@ function GlashausPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
           </div>
         </Collapsible>
 
-        <Collapsible title="Wintergemüse ohne Heizung" subtitle={`${GLASHAUS_GUIDE.winterCrops.length} Kulturen für November bis März`} color={CYAN}>
+        <Collapsible title={t('Wintergemüse ohne Heizung', 'Winter vegetables without heating')} subtitle={t(`${GLASHAUS_GUIDE.winterCrops.length} Kulturen für November bis März`, `${GLASHAUS_GUIDE.winterCrops.length} crops for November to March`)} color={CYAN}>
           <div className="grid gap-2 mt-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
             {GLASHAUS_GUIDE.winterCrops.map((crop, i) => (
               <div key={i} className="info-box info-box-cyan rounded-[10px] p-3">
@@ -888,7 +897,7 @@ function GlashausPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
           </div>
         </Collapsible>
 
-        <Collapsible title="Glashaus aufbauen" subtitle="6 Tipps für Planung und Bau" color={AMBER}>
+        <Collapsible title={t('Glashaus aufbauen', 'Building a greenhouse')} subtitle={t('6 Tipps für Planung und Bau', '6 tips for planning and construction')} color={AMBER}>
           <div className="mt-3">
             {GLASHAUS_GUIDE.buildingTips.map((tip, i) => (
               <div key={i} className="flex gap-[10px] mb-[10px]">
@@ -904,13 +913,14 @@ function GlashausPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 }
 
 function PrinzipienPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Prinzipien', color: RED },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Prinzipien', 'Principles'), color: RED },
       ]} />
-      <SectionHeader tag="Garten-Prinzipien" title="Die Regeln des Gemüseanbaus" subtitle="Fruchtfolge, Mischkultur, Staffelaussaat: die Grundlagen, die alles einfacher machen." />
+      <SectionHeader tag={t('Garten-Prinzipien', 'Garden principles')} title={t('Die Regeln des Gemüseanbaus', 'The rules of growing vegetables')} subtitle={t('Fruchtfolge, Mischkultur, Staffelaussaat: die Grundlagen, die alles einfacher machen.', 'Crop rotation, companion planting, succession sowing: the basics that make everything easier.')} />
       <div className="flex flex-col gap-[10px]">
         {WIKI_PRINCIPLES.map(p => (
           <Collapsible key={p.id} title={p.title} subtitle={p.summary} color={p.color}>
@@ -931,17 +941,18 @@ function PrinzipienPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 }
 
 function WerkzeugPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   const layerColors = [AMBER, 'var(--c-text)', 'var(--c-text)', 'var(--c-text)'];
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Werkzeug', color: 'var(--c-text)' },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Werkzeug', 'Tools'), color: 'var(--c-text)' },
       ]} />
-      <SectionHeader tag="Werkzeug" title="Die Grundausstattung" subtitle="Alles was du brauchst, um 30 m2 Garten erfolgreich zu bewirtschaften." />
+      <SectionHeader tag={t('Werkzeug', 'Tools')} title={t('Die Grundausstattung', 'The basic kit')} subtitle={t('Alles was du brauchst, um 30 m2 Garten erfolgreich zu bewirtschaften.', 'Everything you need to run 30 m2 of garden successfully.')} />
 
       <div className="flex flex-col gap-[10px]">
-        <Collapsible title={`${WIKI_TOOLS.length} Werkzeuge`} subtitle="Kein Schnickschnack, kein Überfluss" color={AMBER} defaultOpen>
+        <Collapsible title={t(`${WIKI_TOOLS.length} Werkzeuge`, `${WIKI_TOOLS.length} tools`)} subtitle={t('Kein Schnickschnack, kein Überfluss', 'No frills, no excess')} color={AMBER} defaultOpen>
           <div className="grid gap-2 mt-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))' }}>
             {WIKI_TOOLS.map((tool, i) => (
               <div key={i} className="surface p-[10px] px-[14px] flex gap-[10px]">
@@ -955,13 +966,13 @@ function WerkzeugPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
           </div>
         </Collapsible>
 
-        <Collapsible title="Hochbeet aufbauen" subtitle="Schicht für Schicht" color={GREEN}>
+        <Collapsible title={t('Hochbeet aufbauen', 'Building a raised bed')} subtitle={t('Schicht für Schicht', 'Layer by layer')} color={GREEN}>
           <div className="flex flex-col mt-3">
             {[
-              { layer: '1. Grobmaterial', desc: 'Äste, Holzabfälle, Zapfen (15–20 cm) · verrottet langsam, gibt Wärme frei', color: AMBER },
-              { layer: '2. Grobkompost',  desc: 'Halbverrottetes Material, Stroh, Rasenschnitt (10-15 cm)', color: 'var(--c-text)' },
-              { layer: '3. Reifer Kompost', desc: 'Vollständig verrottet, dunkel und krümelig (10 cm)', color: 'var(--c-text)' },
-              { layer: '4. Gartenerde + Kompost', desc: 'Mischung 2:1, die Pflanzschicht (20–25 cm) · hier wächst alles', color: 'var(--c-text)' },
+              { layer: t('1. Grobmaterial', '1. Coarse material'), desc: t('Äste, Holzabfälle, Zapfen (15–20 cm) · verrottet langsam, gibt Wärme frei', 'Branches, wood scraps, cones (15–20 cm) · rots slowly, releases warmth'), color: AMBER },
+              { layer: t('2. Grobkompost', '2. Coarse compost'),  desc: t('Halbverrottetes Material, Stroh, Rasenschnitt (10-15 cm)', 'Half-rotted material, straw, grass clippings (10–15 cm)'), color: 'var(--c-text)' },
+              { layer: t('3. Reifer Kompost', '3. Mature compost'), desc: t('Vollständig verrottet, dunkel und krümelig (10 cm)', 'Fully rotted, dark and crumbly (10 cm)'), color: 'var(--c-text)' },
+              { layer: t('4. Gartenerde + Kompost', '4. Garden soil + compost'), desc: t('Mischung 2:1, die Pflanzschicht (20–25 cm) · hier wächst alles', 'A 2:1 mix, the planting layer (20–25 cm) · everything grows here'), color: 'var(--c-text)' },
             ].map((l, i) => (
               <div
                 key={i}
@@ -983,21 +994,22 @@ function WerkzeugPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 }
 
 function QuellenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   const byType = (type: string) => WIKI_SOURCES.filter(s => s.type === type);
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Quellen', color: 'var(--c-sub)' },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Quellen', 'Sources'), color: 'var(--c-sub)' },
       ]} />
-      <SectionHeader tag="Quellen & Literatur" title="Wissenschaftliche Referenzen" subtitle="Alle Informationen basieren auf institutionellen und wissenschaftlichen Quellen aus Österreich und Mitteleuropa." />
+      <SectionHeader tag={t('Quellen & Literatur', 'Sources & literature')} title={t('Wissenschaftliche Referenzen', 'Scientific references')} subtitle={t('Alle Informationen basieren auf institutionellen und wissenschaftlichen Quellen aus Österreich und Mitteleuropa.', 'All information is based on institutional and scientific sources from Austria and Central Europe.')} />
 
       {[
-        { label: 'Institutionen & Forschung', type: 'institution' },
-        { label: 'Standardwerke', type: 'book' },
-        { label: 'Online-Quellen', type: 'website' },
+        { label: t('Institutionen & Forschung', 'Institutions & research'), type: 'institution' },
+        { label: t('Standardwerke', 'Standard works'), type: 'book' },
+        { label: t('Online-Quellen', 'Online sources'), type: 'website' },
       ].map(({ label, type }) => (
-        <Collapsible key={type} title={label} subtitle={`${byType(type).length} Quellen`} color={CYAN} defaultOpen>
+        <Collapsible key={type} title={label} subtitle={t(`${byType(type).length} Quellen`, `${byType(type).length} sources`)} color={CYAN} defaultOpen>
           <div className="flex flex-col gap-2 mt-3">
             {byType(type).map(src => (
               <div key={src.id} className="surface p-3 px-4">
@@ -1015,13 +1027,14 @@ function QuellenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 }
 
 function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Klimaregionen', color: '#15803d' },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Klimaregionen', 'Climate regions'), color: '#15803d' },
       ]} />
-      <SectionHeader tag="Klimaregionen Österreichs" title="7 Anbauregionen, 7 verschiedene Welten" subtitle="Österreich reicht von USDA Zone 5a (Hochalpen) bis 7b (Burgenland/Wien). Was im pannonischen Osten perfekt wächst, scheitert im Waldviertel - und umgekehrt. Alle Klimadaten: GeoSphere Austria, Normalperiode 1991-2020." />
+      <SectionHeader tag={t('Klimaregionen Österreichs', 'Climate regions of Austria')} title={t('7 Anbauregionen, 7 verschiedene Welten', '7 growing regions, 7 different worlds')} subtitle={t('Österreich reicht von USDA Zone 5a (Hochalpen) bis 7b (Burgenland/Wien). Was im pannonischen Osten perfekt wächst, scheitert im Waldviertel - und umgekehrt. Alle Klimadaten: GeoSphere Austria, Normalperiode 1991-2020.', 'Austria ranges from USDA zone 5a (high Alps) to 7b (Burgenland/Vienna). What grows perfectly in the Pannonian east fails in the Waldviertel · and vice versa. All climate data: GeoSphere Austria, standard period 1991–2020.')} />
 
       <div className="flex flex-col gap-3">
         {CLIMATE_REGIONS.map(region => {
@@ -1030,7 +1043,7 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
             <Collapsible
               key={region.id}
               title={region.name}
-              subtitle={`USDA ${region.usdaZone} · ${region.annualTempAvg} C · ${region.annualRainfall} mm · ${region.annualSunHours} Sonnenstunden · ${region.growingSeasonDays} frostfreie Tage`}
+              subtitle={t(`USDA ${region.usdaZone} · ${region.annualTempAvg} C · ${region.annualRainfall} mm · ${region.annualSunHours} Sonnenstunden · ${region.growingSeasonDays} frostfreie Tage`, `USDA ${region.usdaZone} · ${region.annualTempAvg} C · ${region.annualRainfall} mm · ${region.annualSunHours} sunshine hours · ${region.growingSeasonDays} frost-free days`)}
               color={regionColor}
               defaultOpen={region.id === 'pannonisch-nord'}
             >
@@ -1039,12 +1052,12 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
                 <div className="stats-grid mb-4">
                   {[
-                    { label: 'Juli-Hoch',     value: `${region.julyHighAvg} C`,     color: RED },
-                    { label: 'Januar-Tief',   value: `${region.janLowAvg} C`,       color: CYAN },
-                    { label: 'Niederschlag',  value: `${region.annualRainfall} mm/J`, color: CYAN },
-                    { label: 'Sonnenstunden', value: `${region.annualSunHours} h/J`, color: AMBER },
-                    { label: 'Letzter Frost', value: region.lastFrostAvg,           color: CYAN },
-                    { label: 'Erster Frost',  value: region.firstFrostAvg,          color: CYAN },
+                    { label: t('Juli-Hoch', 'July high'),     value: `${region.julyHighAvg} C`,     color: RED },
+                    { label: t('Januar-Tief', 'January low'),   value: `${region.janLowAvg} C`,       color: CYAN },
+                    { label: t('Niederschlag', 'Rainfall'),  value: `${region.annualRainfall} mm/J`, color: CYAN },
+                    { label: t('Sonnenstunden', 'Sunshine hours'), value: `${region.annualSunHours} h/J`, color: AMBER },
+                    { label: t('Letzter Frost', 'Last frost'), value: region.lastFrostAvg,           color: CYAN },
+                    { label: t('Erster Frost', 'First frost'),  value: region.firstFrostAvg,          color: CYAN },
                   ].map((s, i) => (
                     <div key={i} className="surface p-[10px] px-3 rounded-[10px]" style={{ border: `1px solid ${s.color}22` }}>
                       <div className="label mb-0.5" style={{ color: s.color }}>{s.label}</div>
@@ -1053,12 +1066,12 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
                   ))}
                 </div>
 
-                <Collapsible title="Bodentypen" color={AMBER}>
+                <Collapsible title={t('Bodentypen', 'Soil types')} color={AMBER}>
                   <p className="body mt-3">{region.soilTypes}</p>
                 </Collapsible>
 
                 <div className="mt-[10px]">
-                  <Collapsible title="Vorteile" subtitle={`${region.advantages.length} Standortvorteile`} color={GREEN}>
+                  <Collapsible title={t('Vorteile', 'Advantages')} subtitle={t(`${region.advantages.length} Standortvorteile`, `${region.advantages.length} location advantages`)} color={GREEN}>
                     <div className="mt-3">
                       {region.advantages.map((a, i) => (
                         <div key={i} className="flex gap-2 mb-1.5">
@@ -1071,7 +1084,7 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
                 </div>
 
                 <div className="mt-[10px]">
-                  <Collapsible title="Herausforderungen" subtitle={`${region.challenges.length} Punkte`} color={RED}>
+                  <Collapsible title={t('Herausforderungen', 'Challenges')} subtitle={t(`${region.challenges.length} Punkte`, `${region.challenges.length} points`)} color={RED}>
                     <div className="mt-3">
                       {region.challenges.map((c, i) => (
                         <div key={i} className="flex gap-2 mb-1.5">
@@ -1084,7 +1097,7 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
                 </div>
 
                 <div className="flex flex-wrap gap-1.5 mt-3">
-                  <span className="label label-green w-full mb-1">Beste Kulturen</span>
+                  <span className="label label-green w-full mb-1">{t('Beste Kulturen', 'Best crops')}</span>
                   {region.bestCrops.map((crop, i) => (
                     <Tag key={i} label={crop} color={GREEN} />
                   ))}
@@ -1102,25 +1115,32 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
 // ── Ertragsrechner CTA (tool lives on the standalone site ernterechner.com) ────
 function RechnerCTA({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   const ERNTE_URL = 'https://ernterechner.com';
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Ertragsrechner', color: AMBER },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Ertragsrechner', 'Yield calculator'), color: AMBER },
       ]} />
       <SectionHeader
-        tag="Ertragsrechner"
-        title="Ertrag berechnen & Beete visualisieren"
-        subtitle="Der interaktive Ertragsrechner mit Beetvisualisierung ist ein eigenständiges Werkzeug und lebt auf ernterechner.com. Dort berechnest du aus Fläche, Pflanzenanzahl, kg-Ertrag oder Kalorien alle übrigen Werte und siehst deine Beete als Draufsicht, Höhenprofil und Aussaat-bis-Ernte-Zeitplan."
+        tag={t('Ertragsrechner', 'Yield calculator')}
+        title={t('Ertrag berechnen & Beete visualisieren', 'Calculate yield & visualise beds')}
+        subtitle={t('Der interaktive Ertragsrechner mit Beetvisualisierung ist ein eigenständiges Werkzeug und lebt auf ernterechner.com. Dort berechnest du aus Fläche, Pflanzenanzahl, kg-Ertrag oder Kalorien alle übrigen Werte und siehst deine Beete als Draufsicht, Höhenprofil und Aussaat-bis-Ernte-Zeitplan.', 'The interactive yield calculator with bed visualisation is a standalone tool and lives at ernterechner.com. There you can work out all the remaining figures from area, plant count, kg yield or calories, and see your beds as a top-down view, height profile and sowing-to-harvest schedule.')}
       />
       <div
         className="rounded-2xl p-6 mt-2 flex flex-col gap-4"
         style={{ background: 'var(--c-card)', border: `1px solid ${AMBER}44` }}
       >
         <div className="flex flex-wrap gap-2">
-          {['Ertrag ⇄ Fläche ⇄ Pflanzen ⇄ Kalorien', 'Selbstversorgungs-Faustregel', 'Beet-Draufsicht & Höhenprofil', 'Aussaat-bis-Ernte-Zeitplan', 'PDF / Druck-Plan'].map((t) => (
-            <span key={t} className="plant-tag">{t}</span>
+          {[
+            t('Ertrag ⇄ Fläche ⇄ Pflanzen ⇄ Kalorien', 'Yield ⇄ area ⇄ plants ⇄ calories'),
+            t('Selbstversorgungs-Faustregel', 'Self-sufficiency rule of thumb'),
+            t('Beet-Draufsicht & Höhenprofil', 'Bed top view & height profile'),
+            t('Aussaat-bis-Ernte-Zeitplan', 'Sowing-to-harvest schedule'),
+            t('PDF / Druck-Plan', 'PDF / print plan'),
+          ].map((label) => (
+            <span key={label} className="plant-tag">{label}</span>
           ))}
         </div>
         <a
@@ -1130,7 +1150,7 @@ function RechnerCTA({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
           className="inline-flex items-center gap-2 self-start rounded-xl px-5 py-3 font-sans font-semibold"
           style={{ background: AMBER, color: '#1a1a2e', textDecoration: 'none' }}
         >
-          Ertragsrechner öffnen
+          {t('Ertragsrechner öffnen', 'Open yield calculator')}
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M7 17 17 7M9 7h8v8" />
           </svg>

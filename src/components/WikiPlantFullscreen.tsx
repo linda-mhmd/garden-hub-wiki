@@ -1,7 +1,9 @@
 import { WIKI_PLANTS } from '../data/wiki';
 import { WIKI_IMAGE_MAP } from '../data/wiki';
+import { useT } from '../i18n';
 
 export default function WikiPlantFullscreen({ plantId, onBack }: { plantId: string; onBack: () => void }) {
+  const t = useT();
   const plant = WIKI_PLANTS.find(p => p.id === plantId);
   if (!plant) return null;
   const img = WIKI_IMAGE_MAP[plantId];
@@ -25,7 +27,7 @@ export default function WikiPlantFullscreen({ plantId, onBack }: { plantId: stri
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
-          Zurück zum Wiki
+          {t('Zurück zum Wiki', 'Back to wiki')}
         </button>
         <span style={{ fontFamily: 'var(--f-sans)', fontSize: '0.9rem', fontWeight: 600, color: 'var(--c-text)' }}>{plant.name}</span>
       </div>
@@ -61,21 +63,21 @@ export default function WikiPlantFullscreen({ plantId, onBack }: { plantId: stri
 
           {/* Growing info */}
           <div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-sub)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Anbauinfo</div>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-sub)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>{t('Anbauinfo', 'Growing info')}</div>
             <div style={{ background: 'var(--c-card)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '4px 14px' }}>
-              <InfoRow label="Sonne" value={plant.sun} />
-              <InfoRow label="Wasser" value={plant.water} />
-              <InfoRow label="Nährstoff" value={plant.nutrient} />
-              <InfoRow label="Aussaat" value={plant.sowing} />
-              {plant.planting && <InfoRow label="Pflanzung" value={plant.planting} />}
-              <InfoRow label="Ernte" value={plant.harvest} />
+              <InfoRow label={t('Sonne', 'Sun')} value={plant.sun} />
+              <InfoRow label={t('Wasser', 'Water')} value={plant.water} />
+              <InfoRow label={t('Nährstoff', 'Nutrient')} value={plant.nutrient} />
+              <InfoRow label={t('Aussaat', 'Sowing')} value={plant.sowing} />
+              {plant.planting && <InfoRow label={t('Pflanzung', 'Planting')} value={plant.planting} />}
+              <InfoRow label={t('Ernte', 'Harvest')} value={plant.harvest} />
             </div>
           </div>
 
           {/* Beginner tip */}
           {plant.beginnerTip && (
             <div>
-              <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-green)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Anfänger-Tipp</div>
+              <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-green)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>{t('Anfänger-Tipp', 'Beginner tip')}</div>
               <div style={{ background: 'rgba(93,143,46,0.08)', border: '1px solid rgba(93,143,46,0.22)', borderRadius: 12, padding: '14px 16px' }}>
                 <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.9rem', color: 'var(--c-text)', lineHeight: 1.65, margin: 0 }}>{plant.beginnerTip}</p>
               </div>
@@ -88,13 +90,13 @@ export default function WikiPlantFullscreen({ plantId, onBack }: { plantId: stri
           <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
             {plant.partners && (
               <div style={{ background: 'rgba(93,143,46,0.06)', border: '1px solid rgba(93,143,46,0.2)', borderRadius: 12, padding: '14px 16px' }}>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-sub)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Gute Nachbarn</div>
+                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-sub)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{t('Gute Nachbarn', 'Good neighbours')}</div>
                 <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-text)', lineHeight: 1.6, margin: 0 }}>{plant.partners}</p>
               </div>
             )}
             {plant.enemies && (
               <div style={{ background: 'rgba(184,67,46,0.06)', border: '1px solid rgba(184,67,46,0.2)', borderRadius: 12, padding: '14px 16px' }}>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-red)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Schlechte Nachbarn</div>
+                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-red)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{t('Schlechte Nachbarn', 'Bad neighbours')}</div>
                 <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-text)', lineHeight: 1.6, margin: 0 }}>{plant.enemies}</p>
               </div>
             )}
@@ -104,7 +106,7 @@ export default function WikiPlantFullscreen({ plantId, onBack }: { plantId: stri
         {/* Steps */}
         {plant.steps && plant.steps.length > 0 && (
           <div style={{ marginTop: 24 }}>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-sub)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Schritt für Schritt</div>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-sub)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>{t('Schritt für Schritt', 'Step by step')}</div>
             <ol style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
               {plant.steps.map((step, i) => (
                 <li key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
@@ -119,7 +121,7 @@ export default function WikiPlantFullscreen({ plantId, onBack }: { plantId: stri
         {/* Issues */}
         {plant.issues && (
           <div style={{ marginTop: 24, background: 'rgba(212,165,116,0.07)', border: '1px solid rgba(212,165,116,0.2)', borderRadius: 12, padding: '14px 16px' }}>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-amber)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Probleme & Lösungen</div>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-amber)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{t('Probleme & Lösungen', 'Problems & solutions')}</div>
             <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-text)', lineHeight: 1.6, margin: 0 }}>{plant.issues}</p>
           </div>
         )}
@@ -127,7 +129,7 @@ export default function WikiPlantFullscreen({ plantId, onBack }: { plantId: stri
         {/* Sorts */}
         {plant.sorts && (
           <div style={{ marginTop: 20 }}>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-sub)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Empfohlene Sorten</div>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: 'var(--c-sub)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{t('Empfohlene Sorten', 'Recommended varieties')}</div>
             <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-sub)', lineHeight: 1.6, margin: 0 }}>{plant.sorts}</p>
           </div>
         )}

@@ -3,6 +3,7 @@ import { PLANT_GROWTH, getStageForWeek, getPlantRecord, savePlantRecord, weeksPl
 import type { PlantRecord, PlantGrowthData, GrowthStage } from '../data/growth';
 import { DropIcon, HarvestIcon } from './icons/GardenIcons';
 import PlantLink from './PlantLink';
+import { useT } from '../i18n';
 
 const LABELS: Record<string, string> = {
   tomate: 'Tomate', gurke: 'Gurke', melanzani: 'Melanzani', kuerbis: 'Kürbis',
@@ -213,6 +214,7 @@ function PlantShapeAbove({ data, hpx, spx, prog }: {
 
 // ─── Full Cross-Section SVG ───────────────────────────────────────────────────
 function PlantCrossSection({ data, stage, week }: { data: PlantGrowthData; stage: GrowthStage; week: number }) {
+  const t = useT();
   const id = data.plantId;
   const last = data.stages[data.stages.length - 1];
   const hpx  = sp(stage.heightCm,    last.heightCm,    MAX_H[id]  ?? 90);
@@ -277,8 +279,8 @@ function PlantCrossSection({ data, stage, week }: { data: PlantGrowthData; stage
       )}
 
       {/* Zone labels */}
-      <text x={6} y={14} fontFamily="JetBrains Mono" fontSize={8} fill="#5D8F2E" opacity={0.6}>über dem Boden</text>
-      <text x={6} y={GY + 16} fontFamily="JetBrains Mono" fontSize={8} fill="#f59e0b" opacity={0.6}>Boden · Wurzeln</text>
+      <text x={6} y={14} fontFamily="JetBrains Mono" fontSize={8} fill="#5D8F2E" opacity={0.6}>{t('über dem Boden', 'above ground')}</text>
+      <text x={6} y={GY + 16} fontFamily="JetBrains Mono" fontSize={8} fill="#f59e0b" opacity={0.6}>{t('Boden · Wurzeln', 'soil · roots')}</text>
     </svg>
   );
 }
@@ -300,6 +302,7 @@ function StageBar({ data, week, onChange }: { data: PlantGrowthData; week: numbe
 
 // ─── Main View ────────────────────────────────────────────────────────────────
 export default function PlantDetailView({ plantId, onBack }: { plantId: string; onBack: () => void }) {
+  const t = useT();
   const data = PLANT_GROWTH[plantId];
   if (!data) return null;
 
@@ -335,7 +338,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
   }
 
   const wColor = { niedrig: 'var(--c-green)', mittel: 'var(--c-cyan)', hoch: 'var(--c-cyan)' }[stage.watering];
-  const wLabel = { niedrig: 'Wenig gießen', mittel: 'Mittel gießen', hoch: 'Viel gießen' }[stage.watering];
+  const wLabel = { niedrig: t('Wenig gießen', 'Water little'), mittel: t('Mittel gießen', 'Water moderately'), hoch: t('Viel gießen', 'Water a lot') }[stage.watering];
   const wWidth = { niedrig: '33%', mittel: '66%', hoch: '100%' }[stage.watering];
 
   return (
@@ -343,18 +346,18 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
 
       {/* Header */}
       <div className="plant-detail-header">
-        <button onClick={onBack} className="plant-back-btn">← Zurück</button>
+        <button onClick={onBack} className="plant-back-btn">{t('← Zurück', '← Back')}</button>
         <h1 className="m-0 font-display text-[22px] text-text font-semibold">
           {LABELS[plantId] ?? plantId}
         </h1>
         <div className="ml-auto flex gap-2.5 items-center">
           {record ? (
             <div className="plant-planted-badge">
-              Gepflanzt {new Date(record.plantedDate).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+              {t('Gepflanzt', 'Planted')} {new Date(record.plantedDate).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit', year: 'numeric' })}
             </div>
           ) : (
             <button onClick={() => setShowLogForm(!showLogForm)} className="plant-log-btn">
-              Als gepflanzt markieren
+              {t('Als gepflanzt markieren', 'Mark as planted')}
             </button>
           )}
         </div>
@@ -363,21 +366,21 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
       {/* Log form */}
       {showLogForm && (
         <div className="plant-log-form">
-          <span className="font-sans text-[13px] text-text">Pflanzdatum:</span>
+          <span className="font-sans text-[13px] text-text">{t('Pflanzdatum:', 'Planting date:')}</span>
           <input type="date" value={plantedDate} onChange={e => setPlantedDate(e.target.value)}
             className="form-input" />
           <select defaultValue="garten" className="form-select">
-            <option value="garten">Garten - Hochbeet</option>
-            <option value="balkon">Balkon</option>
-            <option value="indoor">Indoor (Anzucht)</option>
+            <option value="garten">{t('Garten - Hochbeet', 'Garden · raised bed')}</option>
+            <option value="balkon">{t('Balkon', 'Balcony')}</option>
+            <option value="indoor">{t('Indoor (Anzucht)', 'Indoor (starting)')}</option>
           </select>
           <button onClick={handleLog}
             className="bg-primary text-bg border-none rounded-lg px-3.5 py-1.5 cursor-pointer text-[13px] font-semibold">
-            Speichern
+            {t('Speichern', 'Save')}
           </button>
           <button onClick={() => setShowLogForm(false)}
             className="bg-transparent border-none text-[rgba(255,255,255,0.4)] cursor-pointer text-[13px]">
-            Abbrechen
+            {t('Abbrechen', 'Cancel')}
           </button>
         </div>
       )}
@@ -388,8 +391,8 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
           <HarvestIcon size={16} style={{ color: harvestReady ? 'var(--c-cyan)' : 'var(--c-green)', flexShrink: 0 }} />
           <span className="font-sans text-[13px]" style={{ color: harvestReady ? 'var(--c-cyan)' : 'var(--c-green)' }}>
             {harvestReady
-              ? <>Ernte möglich! Woche {plantedWeeks} von {data.totalWeeksToHarvest}</>
-              : <>Noch ca. <strong className="text-white">{Math.max(0, weeksLeft)} Wochen</strong> bis zur Ernte · Woche {plantedWeeks} von {data.totalWeeksToHarvest}</>
+              ? <>{t('Ernte möglich! Woche', 'Harvest possible! Week')} {plantedWeeks} {t('von', 'of')} {data.totalWeeksToHarvest}</>
+              : <>{t('Noch ca.', 'Approx.')} <strong className="text-white">{Math.max(0, weeksLeft)} {t('Wochen', 'weeks')}</strong> {t('bis zur Ernte · Woche', 'until harvest · week')} {plantedWeeks} {t('von', 'of')} {data.totalWeeksToHarvest}</>
             }
           </span>
           <div className="ml-auto bg-[rgba(255,255,255,0.12)] rounded-lg h-1.25 w-45 overflow-hidden flex-shrink-0">
@@ -448,7 +451,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
           {/* Tasks card */}
           <div className="bg-bg-soft rounded-2xl p-5 border border-[rgba(255,255,255,0.07)]">
             <h3 className="m-0 mb-3.5 font-sans text-[17px] text-text">
-              Aufgaben · {stage.label}
+              {t('Aufgaben', 'Tasks')} · {stage.label}
             </h3>
             {stage.tasks.map((task, i) => (
               <div key={i} className={`flex gap-2.5 items-start py-2 ${i < stage.tasks.length - 1 ? 'border-b border-[rgba(255,255,255,0.06)]' : ''}`}>
@@ -459,7 +462,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
             {stage.canHarvest && (
               <div className="plant-harvest-ready">
                 <HarvestIcon size={14} style={{ color: 'var(--c-green)', flexShrink: 0 }} />
-                <span className="font-sans text-[13px] text-bg font-medium">Ernte möglich in dieser Phase</span>
+                <span className="font-sans text-[13px] text-bg font-medium">{t('Ernte möglich in dieser Phase', 'Harvest possible in this phase')}</span>
               </div>
             )}
           </div>
@@ -467,9 +470,9 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
           {/* Reminders card (only when logged) */}
           {record && (
             <div className="bg-bg-soft rounded-2xl p-5 border border-[rgba(255,255,255,0.07)]">
-              <h3 className="m-0 mb-3 font-sans text-[15px] text-text">Erinnerungen</h3>
+              <h3 className="m-0 mb-3 font-sans text-[15px] text-text">{t('Erinnerungen', 'Reminders')}</h3>
               {(['watering', 'fertilizing', 'harvest'] as const).map(key => {
-                const lbl = { watering: 'Gießen', fertilizing: 'Düngen', harvest: 'Erntezeit' }[key];
+                const lbl = { watering: t('Gießen', 'Watering'), fertilizing: t('Düngen', 'Fertilising'), harvest: t('Erntezeit', 'Harvest time') }[key];
                 const on = record.reminders[key];
                 return (
                   <div key={key} className="plant-reminder-row">
@@ -483,7 +486,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
                 );
               })}
               <p className="mt-2.5 mb-0 font-sans text-xs text-[rgba(255,255,255,0.35)]">
-                Push-Benachrichtigungen werden nach dem Launch verfügbar
+                {t('Push-Benachrichtigungen werden nach dem Launch verfügbar', 'Push notifications will be available after launch')}
               </p>
             </div>
           )}
@@ -492,7 +495,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
           <div className="bg-bg-soft rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.07)]">
             <div className="plant-tab-bar">
               {(['basics', 'companions', 'tips'] as const).map(tab => {
-                const tabLabel = { basics: 'Grundinfos', companions: 'Begleitpflanzen', tips: 'Tipps & Phasen' }[tab];
+                const tabLabel = { basics: t('Grundinfos', 'Basics'), companions: t('Begleitpflanzen', 'Companions'), tips: t('Tipps & Phasen', 'Tips & phases') }[tab];
                 return (
                   <button key={tab} onClick={() => setActiveTab(tab)}
                     className={`plant-tab ${activeTab === tab ? 'plant-tab--active' : 'plant-tab--inactive'}`}>
@@ -506,8 +509,8 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
               {activeTab === 'basics' && basics && (
                 <dl className="plant-basics-dl">
                   {[
-                    ['Standort', basics.standort], ['Boden', basics.boden], ['Abstand', basics.abstand],
-                    ['Pflanzzeit', basics.pflanzzeit], ['Ernte', basics.ernte], ['Für Anfänger', basics.anfaenger],
+                    [t('Standort', 'Location'), basics.standort], [t('Boden', 'Soil'), basics.boden], [t('Abstand', 'Spacing'), basics.abstand],
+                    [t('Pflanzzeit', 'Planting time'), basics.pflanzzeit], [t('Ernte', 'Harvest'), basics.ernte], [t('Für Anfänger', 'For beginners'), basics.anfaenger],
                   ].map(([k, v]) => (
                     <>
                       <dt key={`dt-${k}`} className="font-sans text-xs text-[rgba(255,255,255,0.35)] font-semibold pt-0.5 whitespace-nowrap">{k}</dt>
@@ -520,7 +523,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
               {activeTab === 'companions' && companion && (
                 <div>
                   <div className="mb-3">
-                    <div className="font-sans text-xs text-text-muted font-bold uppercase tracking-[0.06em] mb-[7px]">Gute Nachbarn</div>
+                    <div className="font-sans text-xs text-text-muted font-bold uppercase tracking-[0.06em] mb-[7px]">{t('Gute Nachbarn', 'Good neighbours')}</div>
                     <div className="flex flex-wrap gap-1.5">
                       {companion.good.map(p => (
                         <span key={p} className="plant-companion-good">
@@ -530,7 +533,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
                     </div>
                   </div>
                   <div className="mb-3.5">
-                    <div className="font-sans text-xs text-[#f59e0b] font-bold uppercase tracking-[0.06em] mb-[7px]">Schlechte Nachbarn</div>
+                    <div className="font-sans text-xs text-[#f59e0b] font-bold uppercase tracking-[0.06em] mb-[7px]">{t('Schlechte Nachbarn', 'Bad neighbours')}</div>
                     <div className="flex flex-wrap gap-1.5">
                       {companion.bad.map(p => (
                         <span key={p} className="plant-companion-bad">
@@ -546,13 +549,13 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
               {activeTab === 'tips' && basics && (
                 <div>
                   <div className="plant-tip-quote">{basics.tipp}</div>
-                  <div className="font-sans text-xs text-[rgba(255,255,255,0.35)] font-bold uppercase tracking-[0.06em] mb-2">Alle Wachstumsphasen</div>
+                  <div className="font-sans text-xs text-[rgba(255,255,255,0.35)] font-bold uppercase tracking-[0.06em] mb-2">{t('Alle Wachstumsphasen', 'All growth stages')}</div>
                   {data.stages.map(s => (
                     <button key={s.week} onClick={() => setWeek(s.week)} className="plant-stage-btn">
                       <div className="font-mono text-xs text-primary w-10 flex-shrink-0 pt-px">W{s.week}</div>
                       <div className="flex-1">
                         <div className="font-sans text-[13px] font-medium text-text">{s.label}</div>
-                        <div className="font-sans text-xs text-[rgba(255,255,255,0.35)] mt-0.5">H: {s.heightCm}cm · Wurzel: {s.rootDepthCm}cm</div>
+                        <div className="font-sans text-xs text-[rgba(255,255,255,0.35)] mt-0.5">{t('H:', 'H:')} {s.heightCm}cm · {t('Wurzel:', 'Root:')} {s.rootDepthCm}cm</div>
                       </div>
                       {s.canHarvest && <HarvestIcon size={13} style={{ color: 'var(--c-green)', flexShrink: 0, marginTop: 2 }} />}
                     </button>
