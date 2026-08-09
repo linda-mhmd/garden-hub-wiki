@@ -219,7 +219,7 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
 
       <PlantGrowthStageRow plantId={plant.id} />
 
-      <div className="flex flex-col gap-[10px]">
+      <div className="stack">
         <Collapsible title={t('Aussaat & Pflanzung', 'Sowing & planting')} subtitle={`${plant.sowing} · ${plant.planting}`} color={GREEN} defaultOpen>
           <div className="two-col mt-3">
             <div>
@@ -386,7 +386,7 @@ function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate:
         <p className="body text-primary italic mt-[14px]">{month.motto}</p>
       </div>
 
-      <div className="flex flex-col gap-[10px]">
+      <div className="stack">
         {sections.filter(s => s.items.length > 0).map((section, i) => (
           <Collapsible key={i} title={section.label} subtitle={t(`${section.items.length} Aufgaben`, `${section.items.length} tasks`)} color={section.color} defaultOpen={i < 3}>
             <div className="mt-[10px]">
@@ -698,7 +698,7 @@ export function SoilInfographic() {
         <rect x="0" y="205" width="400" height="35" fill="#93c5fd99"/>
         <text x="200" y="225" fontSize="9" fill={textFill} fontFamily="monospace" textAnchor="middle">{t('UNTERGRUND / GESTEIN', 'BEDROCK / SUBSTRATE')}</text>
       </svg>
-      <div className="flex flex-col gap-1.5 mt-3">
+      <div className="stack-xs mt-3">
         {[
           { label: t('Mutterboden', 'Topsoil'), text: t('Dein Schatz: dunkel, krumelig, durchwurzelt. Darin leben Milliarden Bakterien, Pilze, Regenwurmer.', 'Your treasure: dark, crumbly, full of roots. Home to billions of bacteria, fungi and earthworms.') },
           { label: t('pH-Wert 6,0-7,0', 'pH value 6.0–7.0'), text: t('Ideal für Gemüse. Tendiert zu leicht kalkhaltig - gut für Tomate + Paprika.', 'Ideal for vegetables. Tends slightly chalky · good for tomato + bell pepper.') },
@@ -736,7 +736,7 @@ function ArticleDetailPage({ article, onNavigate }: { article: WikiArticle; onNa
         </div>
       )}
 
-      <div className="flex flex-col gap-[10px]">
+      <div className="stack">
         {article.sections.map((section, i) => (
           <Collapsible key={i} title={section.title} subtitle={section.content.substring(0, 80) + '...'} color={article.color} defaultOpen={i < 2}>
             <div className="mt-3">
@@ -870,7 +870,7 @@ function GlashausPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
       ]} />
       <SectionHeader tag={t('Glashaus-Leitfaden', 'Greenhouse guide')} title={GLASHAUS_GUIDE.title} subtitle={GLASHAUS_GUIDE.subtitle} />
 
-      <div className="flex flex-col gap-[10px]">
+      <div className="stack">
         <Collapsible title={t('Warum ein Glashaus?', 'Why a greenhouse?')} subtitle={t('Fakten und Forschungsergebnisse', 'Facts and research findings')} color={CYAN} defaultOpen>
           <div className="mt-3">
             {GLASHAUS_GUIDE.keyFacts.map((fact, i) => (
@@ -938,7 +938,7 @@ function PrinzipienPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
         { label: t('Prinzipien', 'Principles'), color: RED },
       ]} />
       <SectionHeader tag={t('Garten-Prinzipien', 'Garden principles')} title={t('Die Regeln des Gemüseanbaus', 'The rules of growing vegetables')} subtitle={t('Fruchtfolge, Mischkultur, Staffelaussaat: die Grundlagen, die alles einfacher machen.', 'Crop rotation, companion planting, succession sowing: the basics that make everything easier.')} />
-      <div className="flex flex-col gap-[10px]">
+      <div className="stack">
         {D.principles.map(p => (
           <Collapsible key={p.id} title={p.title} subtitle={p.summary} color={p.color}>
             <div className="mt-3">
@@ -969,7 +969,7 @@ function WerkzeugPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
       ]} />
       <SectionHeader tag={t('Werkzeug', 'Tools')} title={t('Die Grundausstattung', 'The basic kit')} subtitle={t('Alles was du brauchst, um 30 m2 Garten erfolgreich zu bewirtschaften.', 'Everything you need to run 30 m2 of garden successfully.')} />
 
-      <div className="flex flex-col gap-[10px]">
+      <div className="stack">
         <Collapsible title={t(`${D.tools.length} Werkzeuge`, `${D.tools.length} tools`)} subtitle={t('Kein Schnickschnack, kein Überfluss', 'No frills, no excess')} color={AMBER} defaultOpen>
           <div className="grid gap-2 mt-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))' }}>
             {D.tools.map((tool, i) => (
@@ -1023,13 +1023,14 @@ function QuellenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
       ]} />
       <SectionHeader tag={t('Quellen & Literatur', 'Sources & literature')} title={t('Wissenschaftliche Referenzen', 'Scientific references')} subtitle={t('Alle Informationen basieren auf institutionellen und wissenschaftlichen Quellen aus Österreich und Mitteleuropa.', 'All information is based on institutional and scientific sources from Austria and Central Europe.')} />
 
+      <div className="stack">
       {[
         { label: t('Institutionen & Forschung', 'Institutions & research'), type: 'institution' },
         { label: t('Standardwerke', 'Standard works'), type: 'book' },
         { label: t('Online-Quellen', 'Online sources'), type: 'website' },
       ].map(({ label, type }) => (
         <Collapsible key={type} title={label} subtitle={t(`${byType(type).length} Quellen`, `${byType(type).length} sources`)} color={CYAN} defaultOpen>
-          <div className="flex flex-col gap-2 mt-3">
+          <div className="stack-sm mt-3">
             {byType(type).map(src => (
               <div key={src.id} className="surface p-3 px-4">
                 <h4 className="card-title mb-0">{src.title}</h4>
@@ -1041,6 +1042,7 @@ function QuellenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
           </div>
         </Collapsible>
       ))}
+      </div>
     </div>
   );
 }
@@ -1056,7 +1058,7 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
       ]} />
       <SectionHeader tag={t('Klimaregionen Österreichs', 'Climate regions of Austria')} title={t('7 Anbauregionen, 7 verschiedene Welten', '7 growing regions, 7 different worlds')} subtitle={t('Österreich reicht von USDA Zone 5a (Hochalpen) bis 7b (Burgenland/Wien). Was im pannonischen Osten perfekt wächst, scheitert im Waldviertel - und umgekehrt. Alle Klimadaten: GeoSphere Austria, Normalperiode 1991-2020.', 'Austria ranges from USDA zone 5a (high Alps) to 7b (Burgenland/Vienna). What grows perfectly in the Pannonian east fails in the Waldviertel · and vice versa. All climate data: GeoSphere Austria, standard period 1991–2020.')} />
 
-      <div className="flex flex-col gap-3">
+      <div className="stack">
         {D.regions.map(region => {
           const regionColor = region.id === 'pannonisch-nord' ? AMBER : region.id === 'wien-wienerwald' ? CYAN : '#15803d';
           return (
@@ -1149,7 +1151,7 @@ function RechnerCTA({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
         subtitle={t('Der interaktive Ertragsrechner mit Beetvisualisierung ist ein eigenständiges Werkzeug und lebt auf ernterechner.com. Dort berechnest du aus Fläche, Pflanzenanzahl, kg-Ertrag oder Kalorien alle übrigen Werte und siehst deine Beete als Draufsicht, Höhenprofil und Aussaat-bis-Ernte-Zeitplan.', 'The interactive yield calculator with bed visualisation is a standalone tool and lives at ernterechner.com. There you can work out all the remaining figures from area, plant count, kg yield or calories, and see your beds as a top-down view, height profile and sowing-to-harvest schedule.')}
       />
       <div
-        className="rounded-2xl p-6 mt-2 flex flex-col gap-4"
+        className="rounded-2xl p-6 mt-2 stack-lg"
         style={{ background: 'var(--c-card)', border: `1px solid ${AMBER}44` }}
       >
         <div className="flex flex-wrap gap-2">

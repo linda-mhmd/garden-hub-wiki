@@ -450,7 +450,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
         </div>
 
         {/* Right column: tasks + info */}
-        <div className="flex flex-col gap-4">
+        <div className="stack-lg">
 
           {/* Tasks card */}
           <div className="bg-bg-soft rounded-2xl p-5 border border-[rgba(255,255,255,0.07)]">
