@@ -5,6 +5,7 @@ import WikiPlantFullscreen from './components/WikiPlantFullscreen';
 import { PLANT_GROWTH } from './data/growth';
 import { WIKI_PLANTS } from './data/wiki';
 import { LangToggle, useT } from './i18n';
+import { UnitToggle } from './units';
 import { slugToPlantId } from './i18n/routes';
 import './index.css';
 
@@ -53,6 +54,7 @@ function SiteHeader() {
           >
             {t('Ertragsrechner', 'Yield calculator')} →
           </a>
+          <UnitToggle />
           <LangToggle />
         </div>
       </div>

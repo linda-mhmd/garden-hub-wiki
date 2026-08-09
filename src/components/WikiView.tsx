@@ -5,6 +5,7 @@ import { ARTICLE_IMAGES, type WikiArticle } from '../data/wikiArticles';
 import { PlantNameList } from './PlantLink';
 import { PlantIcon, STAGE_LABELS, resolveIconKey } from '../icons/plant-icons/PlantIcon.tsx';
 import { useT, useLang, type Lang } from '../i18n';
+import { useFormat } from '../units';
 import { useWikiData } from '../data/localized';
 import { sectionToSlug, prefixToSlug, slugToSection, slugToPrefix, plantIdToSlug, slugToPlantId } from '../i18n/routes';
 
@@ -344,6 +345,7 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
 // ── Month Detail Page ─────────────────────────────────────────────────────────
 function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const fmt = useFormat();
   const D = useWikiData();
   const seasonColor = month.month >= 3 && month.month <= 5 ? GREEN
     : month.month >= 6 && month.month <= 8 ? AMBER
@@ -378,7 +380,7 @@ function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate:
             <div className="label mt-1" style={{ color: seasonColor }}>{month.phase}</div>
           </div>
           <div className="text-right">
-            <div className="mono font-bold text-amber">{month.avgTempHigh}° / {month.avgTempLow}°C</div>
+            <div className="mono font-bold text-amber">{fmt.tempRange(month.avgTempHigh, month.avgTempLow)}</div>
             <div className="mono-sm text-water">{month.sunHours}{t('h Sonne', 'h sun')}</div>
             <div className="mono-sm text-water">{month.rainfall}{t(' mm Regen', ' mm rain')}</div>
           </div>
@@ -429,6 +431,7 @@ function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate:
 
 function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const fmt = useFormat();
   const D = useWikiData();
   const IMG2 = 'images/slides/infografik-de/';
   const sections = [
@@ -437,7 +440,7 @@ function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
     { view: 'kalender'   as const, label: t('Monatskalender', 'Monthly calendar'), desc: t('Was wann gesät, gepflanzt und geerntet wird - für jeden Monat', 'What to sow, plant and harvest, month by month'), color: CYAN, count: t('12 Monate', '12 months'), interactive: false, img: IMG2 + 'infografik-de_gartenkalender-22-kulturen-jahrplan_mit-text.png' },
     { view: 'glashaus'   as const, label: t('Glashaus', 'Greenhouse'), desc: t('Kulturen, Wintergemüse, Aufbau-Tipps', 'Crops, winter vegetables, build tips'), color: CYAN, count: `${D.glashaus.plants.length} ${t('Kulturen', 'crops')}`, interactive: false, img: IMG2 + 'infografik-de_glashaus-saisonplanung-daemmerung_mit-text.png' },
     { view: 'rechner'    as const, label: t('Ertragsrechner + Visualisierung', 'Yield calculator + visualisation'), desc: t('Ertrag, Fläche und Kalorien berechnen und Beete visualisieren - im eigenständigen Rechner auf ernterechner.com.', 'Calculate yield, area and calories and visualise beds - on the standalone tool at ernterechner.com.'), color: AMBER, count: t('Externes Tool', 'External tool'), interactive: true, img: IMG2 + 'infografik-de_ertragsrechner-praezision-kilo-kalorien_mit-text.png' },
-    { view: 'regionen'   as const, label: t('Klimaregionen', 'Climate regions'), desc: t('Alle 7 Anbauregionen Österreichs mit Klimadaten und Empfehlungen', 'All 7 growing regions of Austria with climate data and recommendations'), color: '#15803d', count: `${D.regions.length} ${t('Regionen', 'regions')}`, interactive: false, img: IMG2 + 'infografik-de_pannonisches-klima-verstehen_mit-text.png' },
+    { view: 'regionen'   as const, label: t('Klimaregionen', 'Climate regions'), desc: t('Alle 7 Anbauregionen Österreichs mit Klimadaten und Empfehlungen', 'All 7 growing regions of Austria with climate data and recommendations'), color: 'var(--c-green)', count: `${D.regions.length} ${t('Regionen', 'regions')}`, interactive: false, img: IMG2 + 'infografik-de_pannonisches-klima-verstehen_mit-text.png' },
     { view: 'prinzipien' as const, label: t('Prinzipien', 'Principles'), desc: t('Fruchtfolge, Mischkultur, Staffelaussaat', 'Crop rotation, companion planting, succession sowing'), color: RED, count: `${D.principles.length} ${t('Regeln', 'rules')}`, interactive: false, img: IMG2 + 'infografik-de_fruchtfolge-global-kreis_mit-text.png' },
     { view: 'werkzeug'   as const, label: t('Werkzeug', 'Tools'), desc: t('Grundausstattung und Hochbeet-Bau', 'Basic kit and raised-bed building'), color: 'var(--c-bg-soft)', count: `${D.tools.length} ${t('Geräte', 'tools')}`, interactive: false, img: IMG2 + 'infografik-de_solanaceae-tomaten-corten-hochbeet_mit-text.png' },
     { view: 'quellen'    as const, label: t('Quellen & Literatur', 'Sources & literature'), desc: t('Wissenschaftliche und institutionelle Referenzen', 'Scientific and institutional references'), color: 'var(--c-sub)', count: `${D.sources.length} ${t('Quellen', 'sources')}`, interactive: false, img: IMG2 + 'infografik-de_garden-wiki-wissenschaft-tablet_mit-text.png' },
@@ -465,7 +468,7 @@ function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
           <div className="flex-1">
             <div className="label label-green uppercase">{t('Aktuell', 'Now')}: {cm.name}</div>
             <p className="body font-semibold mt-0.5">{cm.motto}</p>
-            <p className="body-sm mt-1">{cm.phase} · {cm.avgTempHigh}°/{cm.avgTempLow}°C · {cm.sunHours}h Sonne</p>
+            <p className="body-sm mt-1">{cm.phase} · {fmt.tempRange(cm.avgTempHigh, cm.avgTempLow)} · {cm.sunHours}h {t('Sonne', 'sun')}</p>
           </div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="2" strokeLinecap="round">
             <polyline points="9 18 15 12 9 6" />
@@ -612,6 +615,7 @@ function PflanzenLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
 
 function KalenderLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const fmt = useFormat();
   const D = useWikiData();
   const seasonGroups = [
     { label: t('Frühling', 'Spring'), months: [3, 4, 5], color: GREEN },
@@ -656,7 +660,7 @@ function KalenderLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
                       <div className="label mt-0.5" style={{ color: group.color }}>{month.phase}</div>
                     </div>
                     <div className="text-right">
-                      <div className="mono text-amber">{month.avgTempHigh}°C</div>
+                      <div className="mono text-amber">{fmt.temp(month.avgTempHigh)}</div>
                       <div className="mono-sm">{taskCount} {t('Aufgaben', 'tasks')}</div>
                     </div>
                   </div>
@@ -960,7 +964,6 @@ function PrinzipienPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 function WerkzeugPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
   const D = useWikiData();
-  const layerColors = [AMBER, 'var(--c-text)', 'var(--c-text)', 'var(--c-text)'];
   return (
     <div>
       <Breadcrumb items={[
@@ -985,22 +988,15 @@ function WerkzeugPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
         </Collapsible>
 
         <Collapsible title={t('Hochbeet aufbauen', 'Building a raised bed')} subtitle={t('Schicht für Schicht', 'Layer by layer')} color={GREEN}>
-          <div className="flex flex-col mt-3">
+          <div className="soil-stack mt-3">
             {[
-              { layer: t('1. Grobmaterial', '1. Coarse material'), desc: t('Äste, Holzabfälle, Zapfen (15–20 cm) · verrottet langsam, gibt Wärme frei', 'Branches, wood scraps, cones (15–20 cm) · rots slowly, releases warmth'), color: AMBER },
-              { layer: t('2. Grobkompost', '2. Coarse compost'),  desc: t('Halbverrottetes Material, Stroh, Rasenschnitt (10-15 cm)', 'Half-rotted material, straw, grass clippings (10–15 cm)'), color: 'var(--c-text)' },
-              { layer: t('3. Reifer Kompost', '3. Mature compost'), desc: t('Vollständig verrottet, dunkel und krümelig (10 cm)', 'Fully rotted, dark and crumbly (10 cm)'), color: 'var(--c-text)' },
-              { layer: t('4. Gartenerde + Kompost', '4. Garden soil + compost'), desc: t('Mischung 2:1, die Pflanzschicht (20–25 cm) · hier wächst alles', 'A 2:1 mix, the planting layer (20–25 cm) · everything grows here'), color: 'var(--c-text)' },
+              { layer: t('1. Grobmaterial', '1. Coarse material'), desc: t('Äste, Holzabfälle, Zapfen (15–20 cm) · verrottet langsam, gibt Wärme frei', 'Branches, wood scraps, cones (15–20 cm) · rots slowly, releases warmth') },
+              { layer: t('2. Grobkompost', '2. Coarse compost'),  desc: t('Halbverrottetes Material, Stroh, Rasenschnitt (10-15 cm)', 'Half-rotted material, straw, grass clippings (10–15 cm)') },
+              { layer: t('3. Reifer Kompost', '3. Mature compost'), desc: t('Vollständig verrottet, dunkel und krümelig (10 cm)', 'Fully rotted, dark and crumbly (10 cm)') },
+              { layer: t('4. Gartenerde + Kompost', '4. Garden soil + compost'), desc: t('Mischung 2:1, die Pflanzschicht (20–25 cm) · hier wächst alles', 'A 2:1 mix, the planting layer (20–25 cm) · everything grows here') },
             ].map((l, i) => (
-              <div
-                key={i}
-                className="p-3 px-4"
-                style={{
-                  background: layerColors[i],
-                  borderRadius: i === 0 ? '10px 10px 0 0' : i === 3 ? '0 0 10px 10px' : 0,
-                }}
-              >
-                <div className="label opacity-70 mb-0.5">{l.layer}</div>
+              <div key={i} className="soil-layer">
+                <div className="label">{l.layer}</div>
                 <p className="body">{l.desc}</p>
               </div>
             ))}
@@ -1049,23 +1045,24 @@ function QuellenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
 function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const fmt = useFormat();
   const D = useWikiData();
   return (
     <div>
       <Breadcrumb items={[
         { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
-        { label: t('Klimaregionen', 'Climate regions'), color: '#15803d' },
+        { label: t('Klimaregionen', 'Climate regions'), color: 'var(--c-green)' },
       ]} />
       <SectionHeader tag={t('Klimaregionen Österreichs', 'Climate regions of Austria')} title={t('7 Anbauregionen, 7 verschiedene Welten', '7 growing regions, 7 different worlds')} subtitle={t('Österreich reicht von USDA Zone 5a (Hochalpen) bis 7b (Burgenland/Wien). Was im pannonischen Osten perfekt wächst, scheitert im Waldviertel - und umgekehrt. Alle Klimadaten: GeoSphere Austria, Normalperiode 1991-2020.', 'Austria ranges from USDA zone 5a (high Alps) to 7b (Burgenland/Vienna). What grows perfectly in the Pannonian east fails in the Waldviertel · and vice versa. All climate data: GeoSphere Austria, standard period 1991–2020.')} />
 
       <div className="stack">
         {D.regions.map(region => {
-          const regionColor = region.id === 'pannonisch-nord' ? AMBER : region.id === 'wien-wienerwald' ? CYAN : '#15803d';
+          const regionColor = region.id === 'pannonisch-nord' ? AMBER : region.id === 'wien-wienerwald' ? CYAN : 'var(--c-green)';
           return (
             <Collapsible
               key={region.id}
               title={region.name}
-              subtitle={t(`USDA ${region.usdaZone} · ${region.annualTempAvg} C · ${region.annualRainfall} mm · ${region.annualSunHours} Sonnenstunden · ${region.growingSeasonDays} frostfreie Tage`, `USDA ${region.usdaZone} · ${region.annualTempAvg} C · ${region.annualRainfall} mm · ${region.annualSunHours} sunshine hours · ${region.growingSeasonDays} frost-free days`)}
+              subtitle={t(`USDA ${region.usdaZone} · ${fmt.temp(region.annualTempAvg)} · ${fmt.rain(region.annualRainfall)} · ${region.annualSunHours} Sonnenstunden · ${region.growingSeasonDays} frostfreie Tage`, `USDA ${region.usdaZone} · ${fmt.temp(region.annualTempAvg)} · ${fmt.rain(region.annualRainfall)} · ${region.annualSunHours} sunshine hours · ${region.growingSeasonDays} frost-free days`)}
               color={regionColor}
               defaultOpen={region.id === 'pannonisch-nord'}
             >
@@ -1074,9 +1071,9 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
                 <div className="stats-grid mb-4">
                   {[
-                    { label: t('Juli-Hoch', 'July high'),     value: `${region.julyHighAvg} C`,     color: RED },
-                    { label: t('Januar-Tief', 'January low'),   value: `${region.janLowAvg} C`,       color: CYAN },
-                    { label: t('Niederschlag', 'Rainfall'),  value: `${region.annualRainfall} mm/J`, color: CYAN },
+                    { label: t('Juli-Hoch', 'July high'),     value: fmt.temp(region.julyHighAvg),     color: RED },
+                    { label: t('Januar-Tief', 'January low'),   value: fmt.temp(region.janLowAvg),       color: CYAN },
+                    { label: t('Niederschlag', 'Rainfall'),  value: `${fmt.rain(region.annualRainfall)}/${t('J', 'yr')}`, color: CYAN },
                     { label: t('Sonnenstunden', 'Sunshine hours'), value: `${region.annualSunHours} h/J`, color: AMBER },
                     { label: t('Letzter Frost', 'Last frost'), value: region.lastFrostAvg,           color: CYAN },
                     { label: t('Erster Frost', 'First frost'),  value: region.firstFrostAvg,          color: CYAN },

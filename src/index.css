@@ -42,6 +42,13 @@
   --sp-md:  1rem;     /* 16px */
   --sp-lg:  1.5rem;   /* 24px */
   --sp-xl:  2rem;     /* 32px */
+
+  /* Soil tones — warm browns for the raised-bed layer diagram. Dark enough
+     that the light body text (--c-text) always has good contrast. */
+  --c-soil-1: #70552f;
+  --c-soil-2: #5b452a;
+  --c-soil-3: #473722;
+  --c-soil-4: #352819;
 }
 
 @theme {
@@ -188,6 +195,16 @@ input, select, textarea { font-family: var(--f-sans); }
 .stack-sm  { display: flex; flex-direction: column; gap: var(--sp-xs); }
 .stack-lg  { display: flex; flex-direction: column; gap: var(--sp-md); }
 .stack-xl  { display: flex; flex-direction: column; gap: var(--sp-lg); }
+
+/* Raised-bed soil-layer diagram — soil-tone backgrounds with legible light text. */
+.soil-stack { border-radius: 10px; overflow: hidden; }
+.soil-layer { padding: var(--sp-sm) var(--sp-md); }
+.soil-layer:nth-child(1) { background: var(--c-soil-1); }
+.soil-layer:nth-child(2) { background: var(--c-soil-2); }
+.soil-layer:nth-child(3) { background: var(--c-soil-3); }
+.soil-layer:nth-child(4) { background: var(--c-soil-4); }
+.soil-layer .label { color: var(--c-text); opacity: 0.8; margin-bottom: 2px; }
+.soil-layer .body  { color: var(--c-text); }
 
 /* ── Card / Surface ──────────────────────────────────────────────────────────
    All containers use .card or .surface. Never set background/border/radius inline.

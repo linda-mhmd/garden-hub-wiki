@@ -537,7 +537,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
                     </div>
                   </div>
                   <div className="mb-3.5">
-                    <div className="font-sans text-xs text-[#f59e0b] font-bold uppercase tracking-[0.06em] mb-[7px]">{t('Schlechte Nachbarn', 'Bad neighbours')}</div>
+                    <div className="font-sans text-xs text-red font-bold uppercase tracking-[0.06em] mb-[7px]">{t('Schlechte Nachbarn', 'Bad neighbours')}</div>
                     <div className="flex flex-wrap gap-1.5">
                       {companion.bad.map(p => (
                         <span key={p} className="plant-companion-bad">
