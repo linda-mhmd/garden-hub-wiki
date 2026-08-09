@@ -154,7 +154,7 @@ export const WIKI_ARTICLES_EN: WikiArticle[] = [
           `Saucers: catch surplus water, which the plant draws back up. But: after 30 min pour off any standing water (waterlogging/mosquitoes).`,
           `Self-watering systems: Blumat clay cones (8–15 EUR each), Gardena balcony set (30–80 EUR), DIY with PET bottles (free).`,
           `For holidays: Blumat cones in an IBC/bucket, or ask a neighbour (the most reliable drip hose in the world).`,
-          `Your balcony setup: pumpkin and aubergine need LOTS of water. Lettuce less, but regularly. Watering twice a day above 25 °C is right.`,
+          `Your balcony setup: pumpkin and eggplant need LOTS of water. Lettuce less, but regularly. Watering twice a day above 25 °C is right.`,
         ],
         tip: `Lettuce on the balcony benefits enormously from watering twice a day, as you have found yourself. Shallow roots + limited soil volume = rapid drying out.`,
       },
@@ -331,7 +331,7 @@ export const WIKI_ARTICLES_EN: WikiArticle[] = [
           `Slugs (especially the Spanish slug): problem #1 for lettuce, cabbage, young plants. Control: slug barrier (physical, 100% effective, 5–10 EUR/m), beer traps (attract and drown them), nematodes (Phasmarhabditis hermaphrodita), collecting them in the evening, runner ducks (the best solution, but: runner ducks).`,
           `Cabbage white butterfly (Pieris brassicae): caterpillars strip cabbage, kohlrabi and broccoli bare. Control: put fine-mesh insect protection netting (3–5 EUR/m²) on from the very start. Organic: Bacillus thuringiensis (Bt product, FiBL-listed).`,
           `Carrot fly (Psila rosae): maggots eat tunnels in carrots. Control: insect protection netting from sowing, companion planting with onions (the scent confuses the fly), shifting sowing dates (avoid the 2nd generation in August).`,
-          `Colorado potato beetle (Leptinotarsa decemlineata): yellow-and-black striped, strips potato and aubergine leaves bare. Control: hand-picking (regularly!), a Bt product for mass infestations, neem oil.`,
+          `Colorado potato beetle (Leptinotarsa decemlineata): yellow-and-black striped, strips potato and eggplant leaves bare. Control: hand-picking (regularly!), a Bt product for mass infestations, neem oil.`,
           `Spider mites (Tetranychidae): tiny, with webs on the undersides of leaves. Typical in dry heat (greenhouse!). Control: raise humidity (misting), introduce predatory mites (Phytoseiulus persimilis).`,
           `Flea beetles (Psylliodes/Phyllotreta): small black beetles that eat tiny holes in cabbage/radish/rocket leaves. Control: keep moist (flea beetles like it dry), fleece, companion planting with lettuce.`,
         ],
@@ -382,9 +382,9 @@ export const WIKI_ARTICLES_EN: WikiArticle[] = [
     sections: [
       {
         title: `Why sow indoors?`,
-        content: `Austria has a short outdoor season (May–October). Heat-loving plants such as tomatoes, bell peppers, chilli and aubergine need a 6–10 week head start on the windowsill to fruit in summer. Without indoor sowing, bell peppers in Vienna never ripen and chilli is impossible. The investment: 2 bags of seed compost, seed pots and a sunny window.`,
+        content: `Austria has a short outdoor season (May–October). Heat-loving plants such as tomatoes, bell peppers, chilli and eggplant need a 6–10 week head start on the windowsill to fruit in summer. Without indoor sowing, bell peppers in Vienna never ripen and chilli is impossible. The investment: 2 bags of seed compost, seed pots and a sunny window.`,
         details: [
-          `INDOOR SOWING ESSENTIAL (can't be done otherwise in Austria): tomato (from mid-March), bell pepper (from late February!), chilli (from January!), aubergine (from late February), celeriac (from February), cape gooseberry (from February).`,
+          `INDOOR SOWING ESSENTIAL (can't be done otherwise in Austria): tomato (from mid-March), bell pepper (from late February!), chilli (from January!), eggplant (from late February), celeriac (from February), cape gooseberry (from February).`,
           `INDOOR SOWING OPTIONAL (faster, but direct sowing works too): lettuce, kohlrabi, cabbage, cucumber, courgette, pumpkin, basil.`,
           `DIRECT SOWING ONLY (won't tolerate transplanting): carrot, radish, pea, bean, spinach, rocket, dill, parsley.`,
           `When to start? Count backwards: planting-out date (16 May, after the Ice Saints) minus the indoor-sowing period. Tomatoes 6–8 weeks = sow mid-March. Bell peppers 10–12 weeks = sow late February.`,
@@ -395,7 +395,7 @@ export const WIKI_ARTICLES_EN: WikiArticle[] = [
         title: `Germination conditions`,
         content: `Seeds germinate under specific conditions. The three factors: temperature, moisture, light (or darkness). Most vegetable seeds germinate at 18–25 °C in evenly moist soil. Some need special treatment.`,
         details: [
-          `Warmth germinators (22–28 °C): bell pepper, chilli, aubergine, cucumber, pumpkin, basil. A heat mat under the seed tray helps enormously (15–30 EUR, reusable).`,
+          `Warmth germinators (22–28 °C): bell pepper, chilli, eggplant, cucumber, pumpkin, basil. A heat mat under the seed tray helps enormously (15–30 EUR, reusable).`,
           `Normal germinators (18–22 °C): tomato, lettuce, kohlrabi, cabbage. Normal room temperature is enough.`,
           `Cold germinators (5–15 °C): parsley, chives, wild garlic. They germinate poorly in warmth. Stratify outdoors or in the fridge.`,
           `Light germinators (don't cover the seed!): lettuce, basil, celeriac, parsley, dill. Just press the seed down, don't cover it with soil.`,
@@ -410,7 +410,7 @@ export const WIKI_ARTICLES_EN: WikiArticle[] = [
         title: `Pricking out, hardening off, planting out`,
         content: `Pricking out = moving the seedlings into larger individual pots. Hardening off = gradually getting them used to outdoor temperatures. Planting out = finally setting them in the bed. Each step matters, and none may be skipped.`,
         details: [
-          `Pricking out: when the 2nd true pair of leaves appears (not the seed leaves!). Move singly into 7–9 cm pots. Set tomatoes deeper than before (they form roots on the stem). Bell peppers/aubergines NOT deeper (they rot!).`,
+          `Pricking out: when the 2nd true pair of leaves appears (not the seed leaves!). Move singly into 7–9 cm pots. Set tomatoes deeper than before (they form roots on the stem). Bell peppers/eggplants NOT deeper (they rot!).`,
           `Hardening off: 7–10 days before planting out. Days 1–3: 2 hours outside in the shade. Days 4–6: 4–6 hours, partly shaded. Days 7–10: all day outside, including in the sun. Bring them in at night if it is below 10 °C.`,
           `Planting out: after the Ice Saints (16 May). In the evening or in cloudy weather. Water the planting hole well. Not in full midday sun. Protect with fleece for the first few nights if cold threatens.`,
           `Keep to the spacing: too close = disease, lack of light, competition. Tomatoes 60–70 cm, bell peppers 40–50 cm, lettuce 25 cm, courgette 100 cm.`,

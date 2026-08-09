@@ -27,7 +27,7 @@ export const WIKI_PRINCIPLES_EN = [
     emoji: '☀️',
     color: '#1e3a5f',
     summary: 'Hot, sunny, dry – a gift for vegetables, but water is scarce.',
-    text: '~300 sunny days a year. Ideal for tomatoes, bell peppers, aubergines and pumpkins – crops that otherwise grow this well only around the Mediterranean. The bottleneck is water: drip irrigation, mulch and a rainwater cistern are mandatory, not optional.',
+    text: '~300 sunny days a year. Ideal for tomatoes, bell peppers, eggplants and pumpkins – crops that otherwise grow this well only around the Mediterranean. The bottleneck is water: drip irrigation, mulch and a rainwater cistern are mandatory, not optional.',
     rule: 'Simple rule: water in the morning, mulch deeply (5–8 cm of straw), connect a water butt.',
   },
   {

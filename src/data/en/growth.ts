@@ -54,7 +54,7 @@ export const PLANT_GROWTH_EN: Record<string, PlantGrowthData> = {
         tasks: ['Pinch out the first flower (king flower) - more fruit set', 'Feed sparingly! Do not overfeed'], watering: 'mittel' },
       { week: 7, label: 'Bushy', heightCm: 40, spreadCm: 38, rootDepthCm: 24, rootSpreadCm: 32,
         tasks: ['Flowers appear', 'Check for spider mites (underside of leaves)', 'Water evenly'], watering: 'mittel',
-        note: 'Aubergines need the most warmth. Below 15°C they stop growing.' },
+        note: 'Eggplants need the most warmth. Below 15°C they stop growing.' },
       { week: 12, label: 'Fruit formation', heightCm: 55, spreadCm: 48, rootDepthCm: 30, rootSpreadCm: 40,
         tasks: ['Fruits become visible', 'Tie in regularly (the fruits get heavy)', 'Limit to 3–5 fruits per plant'], watering: 'mittel' },
       { week: 16, label: 'Harvest', heightCm: 62, spreadCm: 55, rootDepthCm: 34, rootSpreadCm: 44,
