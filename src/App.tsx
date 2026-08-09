@@ -7,6 +7,7 @@ import { WIKI_PLANTS } from './data/wiki';
 import { LangToggle, useT } from './i18n';
 import { UnitToggle } from './units';
 import { slugToPlantId } from './i18n/routes';
+import { CALC_URL } from './links';
 import './index.css';
 
 // Entity prefixes in both languages — a bare sub-id must not be one of these.
@@ -36,7 +37,7 @@ function SiteHeader() {
         </a>
         <div className="site-header__tools">
           <a
-            href="https://ernterechner.com"
+            href={CALC_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="site-header__link"

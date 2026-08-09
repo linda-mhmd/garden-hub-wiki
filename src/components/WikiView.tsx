@@ -7,6 +7,7 @@ import { PlantIcon, STAGE_LABELS, resolveIconKey } from '../icons/plant-icons/Pl
 import { useT, useLang, type Lang } from '../i18n';
 import { useFormat } from '../units';
 import { useWikiData } from '../data/localized';
+import { CALC_URL } from '../links';
 import { sectionToSlug, prefixToSlug, slugToSection, slugToPrefix, plantIdToSlug, slugToPlantId } from '../i18n/routes';
 
 const GREEN  = '#5D8F2E';
@@ -1135,7 +1136,7 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 // ── Ertragsrechner CTA (tool lives on the standalone site ernterechner.com) ────
 function RechnerCTA({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
-  const ERNTE_URL = 'https://ernterechner.com';
+  const ERNTE_URL = CALC_URL;
   return (
     <div>
       <Breadcrumb items={[
