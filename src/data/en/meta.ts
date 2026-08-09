@@ -35,8 +35,8 @@ export const WIKI_PRINCIPLES_EN = [
     title: 'Ice Saints',
     emoji: '🌡️',
     color: '#ef4444',
-    summary: '11–15 May: the five nights that can destroy everything.',
-    text: 'The Ice Saints (Mamertus, Pancras, Servatius, Boniface, Sophia) often bring late frosts down to -3 °C. Frost-tender crops (tomato, bell pepper, cucumber, courgette, beans, basil) should only go outdoors from 16 May. Before that, risk them only under fleece. This is not folklore – it is reliable meteorology for Central Europe.',
+    summary: '11–15 May: Central Europe\'s traditional last-frost window.',
+    text: 'The Ice Saints (Eisheilige) are a Central European weather tradition: the mid-May saints\' days of Mamertus, Pancras, Servatius, Boniface and "Cold Sophie" (11–15 May), when a late cold snap can still bring night frosts near -3 °C after otherwise warm spring weather. In practice it is the region\'s last-frost rule of thumb; if you do not use the term, it is simply your local last frost date. Plant frost-tender crops (tomato, pepper, cucumber, courgette, beans, basil) outdoors only from 16 May, and keep them under fleece before that. It is reliable meteorology, not just folklore. (Dates per the German Weather Service / DWD; see also the US Farmers\' Almanac.)',
     rule: 'Simple rule: no frost-tender vegetables in the ground before 16 May. Full stop.',
   },
   {
