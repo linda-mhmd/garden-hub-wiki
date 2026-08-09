@@ -4,6 +4,7 @@ import { MONTHLY_CALENDAR, GLASHAUS_GUIDE, WIKI_CROSS_LINKS, CLIMATE_REGIONS, ty
 import { WIKI_ARTICLES, WIKI_ARTICLE_MAP, ARTICLE_IMAGES, type WikiArticle } from '../data/wikiArticles';
 import { PlantNameList } from './PlantLink';
 import { PlantIcon, STAGE_LABELS, resolveIconKey } from '../icons/plant-icons/PlantIcon.tsx';
+import { useT } from '../i18n';
 
 const GREEN  = '#5D8F2E';
 const CYAN   = '#4A90C4';
@@ -414,17 +415,18 @@ function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate:
 // ── Landing Pages ─────────────────────────────────────────────────────────────
 
 function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   const IMG2 = 'images/slides/infografik-de/';
   const sections = [
-    { view: 'grundlagen' as const, label: 'Grundlagen', desc: 'Boden, Bewässerung, Kompost, Düngung, Pflanzenschutz, Anzucht', color: GREEN, count: `${WIKI_ARTICLES.length} Leitfäden`, interactive: false, img: IMG2 + 'infografik-de_garden-hub-austria-titel-wald-wurzeln_mit-text.png' },
-    { view: 'pflanzen'   as const, label: 'Pflanzenlexikon', desc: 'Detaillierte Steckbriefe mit Anbauanleitung', color: AMBER, count: `${WIKI_PLANTS.length} Pflanzen`, interactive: false, img: IMG2 + 'infografik-de_pflanzenprofil-paradeiser-tomate_mit-text.png' },
-    { view: 'kalender'   as const, label: 'Monatskalender', desc: 'Was wann gesät, gepflanzt und geerntet wird - für jeden Monat', color: CYAN, count: '12 Monate', interactive: false, img: IMG2 + 'infografik-de_gartenkalender-22-kulturen-jahrplan_mit-text.png' },
-    { view: 'glashaus'   as const, label: 'Glashaus', desc: 'Kulturen, Wintergemüse, Aufbau-Tipps', color: CYAN, count: `${GLASHAUS_GUIDE.plants.length} Kulturen`, interactive: false, img: IMG2 + 'infografik-de_glashaus-saisonplanung-daemmerung_mit-text.png' },
-    { view: 'rechner'    as const, label: 'Ertragsrechner + Visualisierung', desc: 'Ertrag, Fläche und Kalorien berechnen und Beete visualisieren - im eigenständigen Rechner auf ernterechner.com.', color: AMBER, count: 'Externes Tool', interactive: true, img: IMG2 + 'infografik-de_ertragsrechner-praezision-kilo-kalorien_mit-text.png' },
-    { view: 'regionen'   as const, label: 'Klimaregionen', desc: 'Alle 7 Anbauregionen Österreichs mit Klimadaten und Empfehlungen', color: '#15803d', count: `${CLIMATE_REGIONS.length} Regionen`, interactive: false, img: IMG2 + 'infografik-de_pannonisches-klima-verstehen_mit-text.png' },
-    { view: 'prinzipien' as const, label: 'Prinzipien', desc: 'Fruchtfolge, Mischkultur, Staffelaussaat', color: RED, count: `${WIKI_PRINCIPLES.length} Regeln`, interactive: false, img: IMG2 + 'infografik-de_fruchtfolge-global-kreis_mit-text.png' },
-    { view: 'werkzeug'   as const, label: 'Werkzeug', desc: 'Grundausstattung und Hochbeet-Bau', color: 'var(--c-bg-soft)', count: `${WIKI_TOOLS.length} Geräte`, interactive: false, img: IMG2 + 'infografik-de_solanaceae-tomaten-corten-hochbeet_mit-text.png' },
-    { view: 'quellen'    as const, label: 'Quellen & Literatur', desc: 'Wissenschaftliche und institutionelle Referenzen', color: 'var(--c-sub)', count: `${WIKI_SOURCES.length} Quellen`, interactive: false, img: IMG2 + 'infografik-de_garden-wiki-wissenschaft-tablet_mit-text.png' },
+    { view: 'grundlagen' as const, label: t('Grundlagen', 'Basics'), desc: t('Boden, Bewässerung, Kompost, Düngung, Pflanzenschutz, Anzucht', 'Soil, watering, compost, fertilising, plant protection, propagation'), color: GREEN, count: `${WIKI_ARTICLES.length} ${t('Leitfäden', 'guides')}`, interactive: false, img: IMG2 + 'infografik-de_garden-hub-austria-titel-wald-wurzeln_mit-text.png' },
+    { view: 'pflanzen'   as const, label: t('Pflanzenlexikon', 'Plant encyclopedia'), desc: t('Detaillierte Steckbriefe mit Anbauanleitung', 'Detailed profiles with growing instructions'), color: AMBER, count: `${WIKI_PLANTS.length} ${t('Pflanzen', 'plants')}`, interactive: false, img: IMG2 + 'infografik-de_pflanzenprofil-paradeiser-tomate_mit-text.png' },
+    { view: 'kalender'   as const, label: t('Monatskalender', 'Monthly calendar'), desc: t('Was wann gesät, gepflanzt und geerntet wird - für jeden Monat', 'What to sow, plant and harvest, month by month'), color: CYAN, count: t('12 Monate', '12 months'), interactive: false, img: IMG2 + 'infografik-de_gartenkalender-22-kulturen-jahrplan_mit-text.png' },
+    { view: 'glashaus'   as const, label: t('Glashaus', 'Greenhouse'), desc: t('Kulturen, Wintergemüse, Aufbau-Tipps', 'Crops, winter vegetables, build tips'), color: CYAN, count: `${GLASHAUS_GUIDE.plants.length} ${t('Kulturen', 'crops')}`, interactive: false, img: IMG2 + 'infografik-de_glashaus-saisonplanung-daemmerung_mit-text.png' },
+    { view: 'rechner'    as const, label: t('Ertragsrechner + Visualisierung', 'Yield calculator + visualisation'), desc: t('Ertrag, Fläche und Kalorien berechnen und Beete visualisieren - im eigenständigen Rechner auf ernterechner.com.', 'Calculate yield, area and calories and visualise beds - on the standalone tool at ernterechner.com.'), color: AMBER, count: t('Externes Tool', 'External tool'), interactive: true, img: IMG2 + 'infografik-de_ertragsrechner-praezision-kilo-kalorien_mit-text.png' },
+    { view: 'regionen'   as const, label: t('Klimaregionen', 'Climate regions'), desc: t('Alle 7 Anbauregionen Österreichs mit Klimadaten und Empfehlungen', 'All 7 growing regions of Austria with climate data and recommendations'), color: '#15803d', count: `${CLIMATE_REGIONS.length} ${t('Regionen', 'regions')}`, interactive: false, img: IMG2 + 'infografik-de_pannonisches-klima-verstehen_mit-text.png' },
+    { view: 'prinzipien' as const, label: t('Prinzipien', 'Principles'), desc: t('Fruchtfolge, Mischkultur, Staffelaussaat', 'Crop rotation, companion planting, succession sowing'), color: RED, count: `${WIKI_PRINCIPLES.length} ${t('Regeln', 'rules')}`, interactive: false, img: IMG2 + 'infografik-de_fruchtfolge-global-kreis_mit-text.png' },
+    { view: 'werkzeug'   as const, label: t('Werkzeug', 'Tools'), desc: t('Grundausstattung und Hochbeet-Bau', 'Basic kit and raised-bed building'), color: 'var(--c-bg-soft)', count: `${WIKI_TOOLS.length} ${t('Geräte', 'tools')}`, interactive: false, img: IMG2 + 'infografik-de_solanaceae-tomaten-corten-hochbeet_mit-text.png' },
+    { view: 'quellen'    as const, label: t('Quellen & Literatur', 'Sources & literature'), desc: t('Wissenschaftliche und institutionelle Referenzen', 'Scientific and institutional references'), color: 'var(--c-sub)', count: `${WIKI_SOURCES.length} ${t('Quellen', 'sources')}`, interactive: false, img: IMG2 + 'infografik-de_garden-wiki-wissenschaft-tablet_mit-text.png' },
   ];
 
   const currentMonth = new Date().getMonth() + 1;
@@ -432,7 +434,7 @@ function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
   return (
     <div>
-      <SectionHeader tag="Garten-Wiki" title="Gartenarbeit für Einsteiger." subtitle="Wissenschaftlich fundiert, praxiserprobt, für das österreichische Klima. Alle Informationen basieren auf Daten von GeoSphere Austria, BOKU Wien, Arche Noah und der HBLFA Schönbrunn." />
+      <SectionHeader tag={t('Garten-Wiki', 'Garden Wiki')} title={t('Gartenarbeit für Einsteiger.', 'Gardening for beginners.')} subtitle={t('Wissenschaftlich fundiert, praxiserprobt, für das österreichische Klima. Alle Informationen basieren auf Daten von GeoSphere Austria, BOKU Wien, Arche Noah und der HBLFA Schönbrunn.', 'Science-based, field-tested, for the Austrian climate. All information draws on data from GeoSphere Austria, BOKU Vienna, Arche Noah and HBLFA Schönbrunn.')} />
 
       {cm && (
         <button
@@ -447,7 +449,7 @@ function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
             {cm.month}
           </div>
           <div className="flex-1">
-            <div className="label label-green uppercase">Aktuell: {cm.name}</div>
+            <div className="label label-green uppercase">{t('Aktuell', 'Now')}: {cm.name}</div>
             <p className="body font-semibold mt-0.5">{cm.motto}</p>
             <p className="body-sm mt-1">{cm.phase} · {cm.avgTempHigh}°/{cm.avgTempLow}°C · {cm.sunHours}h Sonne</p>
           </div>
@@ -462,7 +464,7 @@ function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/>
           </svg>
-          Interaktive Tools
+          {t('Interaktive Tools', 'Interactive tools')}
         </div>
         <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}>
           {sections.filter(s => s.interactive).map(s => (
@@ -492,7 +494,7 @@ function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
           <path d="M12 22V12"/><path d="M5 12C5 8.13 8.13 5 12 5s7 3.13 7 7"/>
         </svg>
-        Wissen & Nachschlagen
+        {t('Wissen & Nachschlagen', 'Knowledge & reference')}
       </div>
       <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
         {sections.filter(s => !s.interactive).map(s => (

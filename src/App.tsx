@@ -4,6 +4,7 @@ import PlantDetailView from './components/PlantDetailView';
 import WikiPlantFullscreen from './components/WikiPlantFullscreen';
 import { PLANT_GROWTH } from './data/growth';
 import { WIKI_PLANTS } from './data/wiki';
+import { LangToggle, useT } from './i18n';
 import './index.css';
 
 function hashSubId(hash: string): string | null {
@@ -16,6 +17,7 @@ function hashSubId(hash: string): string | null {
 }
 
 function SiteHeader() {
+  const t = useT();
   return (
     <header
       style={{
@@ -33,18 +35,21 @@ function SiteHeader() {
             <path d="M12 11v9" />
           </svg>
           <span style={{ fontFamily: 'var(--f-title)', fontWeight: 700, fontSize: '1.15rem', color: 'var(--c-text)' }}>
-            Garten-Wiki
+            {t('Garten-Wiki', 'Garden Wiki')}
           </span>
         </a>
-        <a
-          href="https://ernterechner.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-mono"
-          style={{ fontSize: '0.7rem', color: 'var(--c-green-mid)', marginLeft: 'auto', letterSpacing: '0.04em', textDecoration: 'none' }}
-        >
-          Ertragsrechner →
-        </a>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 14 }}>
+          <a
+            href="https://ernterechner.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono"
+            style={{ fontSize: '0.7rem', color: 'var(--c-green-mid)', letterSpacing: '0.04em', textDecoration: 'none' }}
+          >
+            {t('Ertragsrechner', 'Yield calculator')} →
+          </a>
+          <LangToggle />
+        </div>
       </div>
     </header>
   );
