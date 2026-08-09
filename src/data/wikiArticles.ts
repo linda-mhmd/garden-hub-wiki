@@ -1801,5 +1801,5 @@ export const ARTICLE_IMAGES: Record<string, string> = {
   troubleshooting:        IMG + 'infografik-de_pannonisches-klima-verstehen_mit-text.png',
   vorratskalender:        IMG + 'infografik-de_gartenkalender-22-kulturen-jahrplan_mit-text.png',
   'wissenschaft-techniken': IMG + 'infografik-de_garden-wiki-wissenschaft-tablet_mit-text.png',
-  'erste-schritte':       IMG + 'infografik-de_garden-hub-titel-haus-garten_mit-text.png',
+  'erste-schritte':       IMG + 'infografik-de_hochbeet-lasagne-methode_mit-text.png',
 };
