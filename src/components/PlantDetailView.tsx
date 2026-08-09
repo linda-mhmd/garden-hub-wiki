@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { PLANT_GROWTH, getStageForWeek, getPlantRecord, savePlantRecord, weeksPlanted } from '../data/growth';
+import { getStageForWeek, getPlantRecord, savePlantRecord, weeksPlanted } from '../data/growth';
 import type { PlantRecord, PlantGrowthData, GrowthStage } from '../data/growth';
 import { DropIcon, HarvestIcon } from './icons/GardenIcons';
 import PlantLink from './PlantLink';
 import { useT } from '../i18n';
+import { useWikiData, useGrowthData } from '../data/localized';
 
 const LABELS: Record<string, string> = {
   tomate: 'Tomate', gurke: 'Gurke', melanzani: 'Melanzani', kuerbis: 'Kürbis',
@@ -303,7 +304,10 @@ function StageBar({ data, week, onChange }: { data: PlantGrowthData; week: numbe
 // ─── Main View ────────────────────────────────────────────────────────────────
 export default function PlantDetailView({ plantId, onBack }: { plantId: string; onBack: () => void }) {
   const t = useT();
-  const data = PLANT_GROWTH[plantId];
+  const D = useWikiData();
+  const growth = useGrowthData();
+  const data = growth[plantId];
+  const plant = D.plants.find(p => p.id === plantId);
   if (!data) return null;
 
   const [week, setWeek] = useState(0);
@@ -348,7 +352,7 @@ export default function PlantDetailView({ plantId, onBack }: { plantId: string; 
       <div className="plant-detail-header">
         <button onClick={onBack} className="plant-back-btn">{t('← Zurück', '← Back')}</button>
         <h1 className="m-0 font-display text-[22px] text-text font-semibold">
-          {LABELS[plantId] ?? plantId}
+          {t(LABELS[plantId] ?? plantId, plant?.name ?? LABELS[plantId] ?? plantId)}
         </h1>
         <div className="ml-auto flex gap-2.5 items-center">
           {record ? (

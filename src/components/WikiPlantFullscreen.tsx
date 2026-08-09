@@ -1,10 +1,11 @@
-import { WIKI_PLANTS } from '../data/wiki';
 import { WIKI_IMAGE_MAP } from '../data/wiki';
 import { useT } from '../i18n';
+import { useWikiData } from '../data/localized';
 
 export default function WikiPlantFullscreen({ plantId, onBack }: { plantId: string; onBack: () => void }) {
   const t = useT();
-  const plant = WIKI_PLANTS.find(p => p.id === plantId);
+  const { plants } = useWikiData();
+  const plant = plants.find(p => p.id === plantId);
   if (!plant) return null;
   const img = WIKI_IMAGE_MAP[plantId];
 

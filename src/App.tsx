@@ -5,13 +5,18 @@ import WikiPlantFullscreen from './components/WikiPlantFullscreen';
 import { PLANT_GROWTH } from './data/growth';
 import { WIKI_PLANTS } from './data/wiki';
 import { LangToggle, useT } from './i18n';
+import { slugToPlantId } from './i18n/routes';
 import './index.css';
+
+// Entity prefixes in both languages — a bare sub-id must not be one of these.
+const HASH_PREFIXES = ['pflanze', 'artikel', 'monat', 'plant', 'article', 'month'];
 
 function hashSubId(hash: string): string | null {
   const parts = hash.replace(/^#/, '').split('/');
-  // Deep link form: #wiki/<plantId>  (a bare plant id, not a named sub-view)
-  if (parts[0] === 'wiki' && parts[1] && parts[1] !== 'pflanze' && parts[1] !== 'artikel' && parts[1] !== 'monat') {
-    return parts[1];
+  // Deep link form: #wiki/<plantId | plantSlug>  (a bare plant, not a named sub-view)
+  if (parts[0] === 'wiki' && parts[1] && !HASH_PREFIXES.includes(parts[1])) {
+    // Resolve an English plant slug (e.g. 'tomato') to its id; German ids pass through.
+    return slugToPlantId(parts[1]);
   }
   return null;
 }

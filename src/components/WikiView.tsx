@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { WIKI_PLANTS, WIKI_PRINCIPLES, WIKI_TOOLS, WIKI_SOURCES, WIKI_IMAGE_MAP, type WikiPlant } from '../data/wiki';
-import { MONTHLY_CALENDAR, GLASHAUS_GUIDE, WIKI_CROSS_LINKS, CLIMATE_REGIONS, type MonthEntry } from '../data/wikiExpanded';
-import { WIKI_ARTICLES, WIKI_ARTICLE_MAP, ARTICLE_IMAGES, type WikiArticle } from '../data/wikiArticles';
+import type { WikiPlant } from '../data/wiki';
+import type { MonthEntry } from '../data/wikiExpanded';
+import { ARTICLE_IMAGES, type WikiArticle } from '../data/wikiArticles';
 import { PlantNameList } from './PlantLink';
 import { PlantIcon, STAGE_LABELS, resolveIconKey } from '../icons/plant-icons/PlantIcon.tsx';
-import { useT } from '../i18n';
+import { useT, useLang, type Lang } from '../i18n';
+import { useWikiData } from '../data/localized';
+import { sectionToSlug, prefixToSlug, slugToSection, slugToPrefix, plantIdToSlug, slugToPlantId } from '../i18n/routes';
 
 const GREEN  = '#5D8F2E';
 const CYAN   = '#4A90C4';
@@ -65,11 +67,12 @@ function SectionHeader({ tag, title, subtitle }: { tag: string; title: string; s
 
 function SourceLine({ ids }: { ids?: string[] }) {
   const t = useT();
+  const D = useWikiData();
   if (!ids || ids.length === 0) return null;
   return (
     <p className="source-note">
       {t('Quellen', 'Sources')}: {ids.map(id => {
-        const s = WIKI_SOURCES.find(x => x.id === id);
+        const s = D.sources.find(x => x.id === id);
         return s ? (s.author ? `${s.author} (${s.year || ''})` : s.title) : id;
       }).join(' · ')}
     </p>
@@ -93,28 +96,32 @@ function Breadcrumb({ items }: { items: { label: string; onClick?: () => void; c
   );
 }
 
-// ── URL hash routing ──────────────────────────────────────────────────────────
-function wikiPageToHash(p: WikiPage): string {
+// ── URL hash routing (bilingual: emits the active language, accepts either) ─────
+function wikiPageToHash(p: WikiPage, lang: Lang): string {
   switch (p.view) {
     case 'home':    return '#wiki';
-    case 'artikel': return `#wiki/artikel/${p.id}`;
-    case 'pflanze': return `#wiki/pflanze/${p.id}`;
-    case 'monat':   return `#wiki/monat/${p.month}`;
-    default:        return `#wiki/${p.view}`;
+    case 'artikel': return `#wiki/${prefixToSlug('artikel', lang)}/${p.id}`;
+    case 'pflanze': return `#wiki/${prefixToSlug('pflanze', lang)}/${plantIdToSlug(p.id, lang)}`;
+    case 'monat':   return `#wiki/${prefixToSlug('monat', lang)}/${p.month}`;
+    default:        return `#wiki/${sectionToSlug(p.view, lang)}`;
   }
 }
 
 function hashToWikiPage(hash: string): WikiPage {
   const parts = hash.replace(/^#/, '').split('/');
   if (parts[0] !== 'wiki') return { view: 'home' };
-  const view = parts[1];
-  if (!view) return { view: 'home' };
-  if (view === 'artikel' && parts[2]) return { view: 'artikel', id: parts[2] };
-  if (view === 'pflanze' && parts[2]) return { view: 'pflanze', id: parts[2] };
-  if (view === 'monat' && parts[2]) {
+  const seg = parts[1];
+  if (!seg) return { view: 'home' };
+  // Normalise an English OR German entity prefix back to the German prefix.
+  const prefix = slugToPrefix(seg);
+  if (prefix === 'artikel' && parts[2]) return { view: 'artikel', id: parts[2] };
+  if (prefix === 'pflanze' && parts[2]) return { view: 'pflanze', id: slugToPlantId(parts[2]) };
+  if (prefix === 'monat' && parts[2]) {
     const month = parseInt(parts[2], 10);
     if (month >= 1 && month <= 12) return { view: 'monat', month };
   }
+  // Normalise an English OR German section slug back to the German view key.
+  const view = slugToSection(seg);
   const simpleViews = ['grundlagen', 'pflanzen', 'kalender', 'glashaus', 'prinzipien', 'regionen', 'werkzeug', 'quellen'] as const;
   if ((simpleViews as readonly string[]).includes(view)) return { view: view as typeof simpleViews[number] };
   return { view: 'home' };
@@ -161,9 +168,10 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
   plant: WikiPlant; onNavigate: (p: WikiPage) => void; onSelectGrowth?: (id: string) => void;
 }) {
   const t = useT();
-  const img = WIKI_IMAGE_MAP[plant.id];
-  const crossLinks = WIKI_CROSS_LINKS[plant.id] || [];
-  const relatedPlants = (plant.relatedIds || []).map(rid => WIKI_PLANTS.find(p => p.id === rid)).filter(Boolean) as WikiPlant[];
+  const D = useWikiData();
+  const img = D.imageMap[plant.id];
+  const crossLinks = D.crossLinks[plant.id] || [];
+  const relatedPlants = (plant.relatedIds || []).map(rid => D.plants.find(p => p.id === rid)).filter(Boolean) as WikiPlant[];
 
   return (
     <div>
@@ -336,6 +344,7 @@ function PlantDetailPage({ plant, onNavigate, onSelectGrowth }: {
 // ── Month Detail Page ─────────────────────────────────────────────────────────
 function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const D = useWikiData();
   const seasonColor = month.month >= 3 && month.month <= 5 ? GREEN
     : month.month >= 6 && month.month <= 8 ? AMBER
     : month.month >= 9 && month.month <= 11 ? RED : CYAN;
@@ -403,11 +412,11 @@ function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate:
 
       <div className="flex justify-between mt-6">
         {month.month > 1 && (
-          <LinkButton label={`< ${MONTHLY_CALENDAR[month.month - 2].name}`} onClick={() => onNavigate({ view: 'monat', month: month.month - 1 })} />
+          <LinkButton label={`< ${D.months[month.month - 2].name}`} onClick={() => onNavigate({ view: 'monat', month: month.month - 1 })} />
         )}
         <div className="flex-1" />
         {month.month < 12 && (
-          <LinkButton label={`${MONTHLY_CALENDAR[month.month].name} >`} onClick={() => onNavigate({ view: 'monat', month: month.month + 1 })} />
+          <LinkButton label={`${D.months[month.month].name} >`} onClick={() => onNavigate({ view: 'monat', month: month.month + 1 })} />
         )}
       </div>
 
@@ -420,21 +429,22 @@ function MonthDetailPage({ month, onNavigate }: { month: MonthEntry; onNavigate:
 
 function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const D = useWikiData();
   const IMG2 = 'images/slides/infografik-de/';
   const sections = [
-    { view: 'grundlagen' as const, label: t('Grundlagen', 'Basics'), desc: t('Boden, Bewässerung, Kompost, Düngung, Pflanzenschutz, Anzucht', 'Soil, watering, compost, fertilising, plant protection, propagation'), color: GREEN, count: `${WIKI_ARTICLES.length} ${t('Leitfäden', 'guides')}`, interactive: false, img: IMG2 + 'infografik-de_garden-hub-austria-titel-wald-wurzeln_mit-text.png' },
-    { view: 'pflanzen'   as const, label: t('Pflanzenlexikon', 'Plant encyclopedia'), desc: t('Detaillierte Steckbriefe mit Anbauanleitung', 'Detailed profiles with growing instructions'), color: AMBER, count: `${WIKI_PLANTS.length} ${t('Pflanzen', 'plants')}`, interactive: false, img: IMG2 + 'infografik-de_pflanzenprofil-paradeiser-tomate_mit-text.png' },
+    { view: 'grundlagen' as const, label: t('Grundlagen', 'Basics'), desc: t('Boden, Bewässerung, Kompost, Düngung, Pflanzenschutz, Anzucht', 'Soil, watering, compost, fertilising, plant protection, propagation'), color: GREEN, count: `${D.articles.length} ${t('Leitfäden', 'guides')}`, interactive: false, img: IMG2 + 'infografik-de_garden-hub-austria-titel-wald-wurzeln_mit-text.png' },
+    { view: 'pflanzen'   as const, label: t('Pflanzenlexikon', 'Plant encyclopedia'), desc: t('Detaillierte Steckbriefe mit Anbauanleitung', 'Detailed profiles with growing instructions'), color: AMBER, count: `${D.plants.length} ${t('Pflanzen', 'plants')}`, interactive: false, img: IMG2 + 'infografik-de_pflanzenprofil-paradeiser-tomate_mit-text.png' },
     { view: 'kalender'   as const, label: t('Monatskalender', 'Monthly calendar'), desc: t('Was wann gesät, gepflanzt und geerntet wird - für jeden Monat', 'What to sow, plant and harvest, month by month'), color: CYAN, count: t('12 Monate', '12 months'), interactive: false, img: IMG2 + 'infografik-de_gartenkalender-22-kulturen-jahrplan_mit-text.png' },
-    { view: 'glashaus'   as const, label: t('Glashaus', 'Greenhouse'), desc: t('Kulturen, Wintergemüse, Aufbau-Tipps', 'Crops, winter vegetables, build tips'), color: CYAN, count: `${GLASHAUS_GUIDE.plants.length} ${t('Kulturen', 'crops')}`, interactive: false, img: IMG2 + 'infografik-de_glashaus-saisonplanung-daemmerung_mit-text.png' },
+    { view: 'glashaus'   as const, label: t('Glashaus', 'Greenhouse'), desc: t('Kulturen, Wintergemüse, Aufbau-Tipps', 'Crops, winter vegetables, build tips'), color: CYAN, count: `${D.glashaus.plants.length} ${t('Kulturen', 'crops')}`, interactive: false, img: IMG2 + 'infografik-de_glashaus-saisonplanung-daemmerung_mit-text.png' },
     { view: 'rechner'    as const, label: t('Ertragsrechner + Visualisierung', 'Yield calculator + visualisation'), desc: t('Ertrag, Fläche und Kalorien berechnen und Beete visualisieren - im eigenständigen Rechner auf ernterechner.com.', 'Calculate yield, area and calories and visualise beds - on the standalone tool at ernterechner.com.'), color: AMBER, count: t('Externes Tool', 'External tool'), interactive: true, img: IMG2 + 'infografik-de_ertragsrechner-praezision-kilo-kalorien_mit-text.png' },
-    { view: 'regionen'   as const, label: t('Klimaregionen', 'Climate regions'), desc: t('Alle 7 Anbauregionen Österreichs mit Klimadaten und Empfehlungen', 'All 7 growing regions of Austria with climate data and recommendations'), color: '#15803d', count: `${CLIMATE_REGIONS.length} ${t('Regionen', 'regions')}`, interactive: false, img: IMG2 + 'infografik-de_pannonisches-klima-verstehen_mit-text.png' },
-    { view: 'prinzipien' as const, label: t('Prinzipien', 'Principles'), desc: t('Fruchtfolge, Mischkultur, Staffelaussaat', 'Crop rotation, companion planting, succession sowing'), color: RED, count: `${WIKI_PRINCIPLES.length} ${t('Regeln', 'rules')}`, interactive: false, img: IMG2 + 'infografik-de_fruchtfolge-global-kreis_mit-text.png' },
-    { view: 'werkzeug'   as const, label: t('Werkzeug', 'Tools'), desc: t('Grundausstattung und Hochbeet-Bau', 'Basic kit and raised-bed building'), color: 'var(--c-bg-soft)', count: `${WIKI_TOOLS.length} ${t('Geräte', 'tools')}`, interactive: false, img: IMG2 + 'infografik-de_solanaceae-tomaten-corten-hochbeet_mit-text.png' },
-    { view: 'quellen'    as const, label: t('Quellen & Literatur', 'Sources & literature'), desc: t('Wissenschaftliche und institutionelle Referenzen', 'Scientific and institutional references'), color: 'var(--c-sub)', count: `${WIKI_SOURCES.length} ${t('Quellen', 'sources')}`, interactive: false, img: IMG2 + 'infografik-de_garden-wiki-wissenschaft-tablet_mit-text.png' },
+    { view: 'regionen'   as const, label: t('Klimaregionen', 'Climate regions'), desc: t('Alle 7 Anbauregionen Österreichs mit Klimadaten und Empfehlungen', 'All 7 growing regions of Austria with climate data and recommendations'), color: '#15803d', count: `${D.regions.length} ${t('Regionen', 'regions')}`, interactive: false, img: IMG2 + 'infografik-de_pannonisches-klima-verstehen_mit-text.png' },
+    { view: 'prinzipien' as const, label: t('Prinzipien', 'Principles'), desc: t('Fruchtfolge, Mischkultur, Staffelaussaat', 'Crop rotation, companion planting, succession sowing'), color: RED, count: `${D.principles.length} ${t('Regeln', 'rules')}`, interactive: false, img: IMG2 + 'infografik-de_fruchtfolge-global-kreis_mit-text.png' },
+    { view: 'werkzeug'   as const, label: t('Werkzeug', 'Tools'), desc: t('Grundausstattung und Hochbeet-Bau', 'Basic kit and raised-bed building'), color: 'var(--c-bg-soft)', count: `${D.tools.length} ${t('Geräte', 'tools')}`, interactive: false, img: IMG2 + 'infografik-de_solanaceae-tomaten-corten-hochbeet_mit-text.png' },
+    { view: 'quellen'    as const, label: t('Quellen & Literatur', 'Sources & literature'), desc: t('Wissenschaftliche und institutionelle Referenzen', 'Scientific and institutional references'), color: 'var(--c-sub)', count: `${D.sources.length} ${t('Quellen', 'sources')}`, interactive: false, img: IMG2 + 'infografik-de_garden-wiki-wissenschaft-tablet_mit-text.png' },
   ];
 
   const currentMonth = new Date().getMonth() + 1;
-  const cm = MONTHLY_CALENDAR.find(m => m.month === currentMonth);
+  const cm = D.months.find(m => m.month === currentMonth);
 
   return (
     <div>
@@ -528,8 +538,9 @@ function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
 function PflanzenLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const D = useWikiData();
   const [filter, setFilter] = useState<'alle' | 'glashaus' | 'balkon' | 'frosthart'>('alle');
-  const filtered = WIKI_PLANTS.filter(p => {
+  const filtered = D.plants.filter(p => {
     if (filter === 'glashaus') return p.glashaus;
     if (filter === 'balkon') return p.balcony;
     if (filter === 'frosthart') return p.frostHardy;
@@ -549,7 +560,7 @@ function PflanzenLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
         { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
         { label: t('Pflanzenlexikon', 'Plant encyclopedia'), color: AMBER },
       ]} />
-      <SectionHeader tag={t('Pflanzenlexikon', 'Plant encyclopedia')} title={t(`${WIKI_PLANTS.length} Pflanzen für Österreich`, `${WIKI_PLANTS.length} plants for Austria`)} subtitle={t('Jede Pflanze mit wissenschaftlichem Namen, Anbauanleitung, Sortenempfehlung und Quellenangaben. Klicke für die Detailseite.', 'Every plant with its scientific name, growing instructions, variety recommendations and sources. Tap for the detail page.')} />
+      <SectionHeader tag={t('Pflanzenlexikon', 'Plant encyclopedia')} title={t(`${D.plants.length} Pflanzen für Österreich`, `${D.plants.length} plants for Austria`)} subtitle={t('Jede Pflanze mit wissenschaftlichem Namen, Anbauanleitung, Sortenempfehlung und Quellenangaben. Klicke für die Detailseite.', 'Every plant with its scientific name, growing instructions, variety recommendations and sources. Tap for the detail page.')} />
 
       <div className="flex gap-1.5 mb-5 flex-wrap">
         {filters.map(f => (
@@ -570,7 +581,7 @@ function PflanzenLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
 
       <div className="grid gap-[10px]" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
         {filtered.map(p => {
-          const img = WIKI_IMAGE_MAP[p.id];
+          const img = D.imageMap[p.id];
           return (
             <button
               key={p.id}
@@ -601,6 +612,7 @@ function PflanzenLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
 
 function KalenderLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const D = useWikiData();
   const seasonGroups = [
     { label: t('Frühling', 'Spring'), months: [3, 4, 5], color: GREEN },
     { label: t('Sommer', 'Summer'),   months: [6, 7, 8], color: AMBER },
@@ -624,7 +636,7 @@ function KalenderLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
           </h3>
           <div className="grid gap-[10px]" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
             {group.months.map(m => {
-              const month = MONTHLY_CALENDAR.find(x => x.month === m)!;
+              const month = D.months.find(x => x.month === m)!;
               const taskCount = month.sowIndoor.length + month.sowOutdoor.length + month.plant.length + month.harvest.length + month.care.length + month.glashaus.length;
               return (
                 <button
@@ -703,7 +715,8 @@ export function SoilInfographic() {
 // ── Article Detail Page ────────────────────────────────────────────────────
 function ArticleDetailPage({ article, onNavigate }: { article: WikiArticle; onNavigate: (p: WikiPage) => void }) {
   const t = useT();
-  const related = (article.relatedArticles || []).map(id => WIKI_ARTICLE_MAP[id]).filter(Boolean);
+  const D = useWikiData();
+  const related = (article.relatedArticles || []).map(id => D.articleMap[id]).filter(Boolean);
   return (
     <div>
       <Breadcrumb items={[
@@ -787,6 +800,7 @@ function ArticleDetailPage({ article, onNavigate }: { article: WikiArticle; onNa
 
 function GrundlagenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const D = useWikiData();
   return (
     <div>
       <Breadcrumb items={[
@@ -796,7 +810,7 @@ function GrundlagenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
       <SectionHeader tag={t('Grundlagen', 'Basics')} title={t('Alles was du wissen musst', 'Everything you need to know')} subtitle={t('Boden, Wasser, Kompost, Düngung, Pflanzenschutz, Anzucht und Saatgut. Jeder Artikel ist ein vollständiger Leitfaden mit wissenschaftlichen Quellen.', 'Soil, water, compost, fertilising, plant protection, propagation and seed. Each article is a complete guide with scientific sources.')} />
 
       <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-        {WIKI_ARTICLES.map(article => {
+        {D.articles.map(article => {
           const img = ARTICLE_IMAGES[article.id];
           return (
             <button
@@ -846,6 +860,8 @@ function GrundlagenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
 function GlashausPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const D = useWikiData();
+  const GLASHAUS_GUIDE = D.glashaus;
   return (
     <div>
       <Breadcrumb items={[
@@ -914,6 +930,7 @@ function GlashausPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
 function PrinzipienPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const D = useWikiData();
   return (
     <div>
       <Breadcrumb items={[
@@ -922,7 +939,7 @@ function PrinzipienPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
       ]} />
       <SectionHeader tag={t('Garten-Prinzipien', 'Garden principles')} title={t('Die Regeln des Gemüseanbaus', 'The rules of growing vegetables')} subtitle={t('Fruchtfolge, Mischkultur, Staffelaussaat: die Grundlagen, die alles einfacher machen.', 'Crop rotation, companion planting, succession sowing: the basics that make everything easier.')} />
       <div className="flex flex-col gap-[10px]">
-        {WIKI_PRINCIPLES.map(p => (
+        {D.principles.map(p => (
           <Collapsible key={p.id} title={p.title} subtitle={p.summary} color={p.color}>
             <div className="mt-3">
               <p className="body mb-[14px] leading-[1.8]">{p.text}</p>
@@ -942,6 +959,7 @@ function PrinzipienPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
 function WerkzeugPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const D = useWikiData();
   const layerColors = [AMBER, 'var(--c-text)', 'var(--c-text)', 'var(--c-text)'];
   return (
     <div>
@@ -952,9 +970,9 @@ function WerkzeugPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
       <SectionHeader tag={t('Werkzeug', 'Tools')} title={t('Die Grundausstattung', 'The basic kit')} subtitle={t('Alles was du brauchst, um 30 m2 Garten erfolgreich zu bewirtschaften.', 'Everything you need to run 30 m2 of garden successfully.')} />
 
       <div className="flex flex-col gap-[10px]">
-        <Collapsible title={t(`${WIKI_TOOLS.length} Werkzeuge`, `${WIKI_TOOLS.length} tools`)} subtitle={t('Kein Schnickschnack, kein Überfluss', 'No frills, no excess')} color={AMBER} defaultOpen>
+        <Collapsible title={t(`${D.tools.length} Werkzeuge`, `${D.tools.length} tools`)} subtitle={t('Kein Schnickschnack, kein Überfluss', 'No frills, no excess')} color={AMBER} defaultOpen>
           <div className="grid gap-2 mt-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))' }}>
-            {WIKI_TOOLS.map((tool, i) => (
+            {D.tools.map((tool, i) => (
               <div key={i} className="surface p-[10px] px-[14px] flex gap-[10px]">
                 <div className="label label-amber font-bold shrink-0">{String(i+1).padStart(2,'0')}</div>
                 <div>
@@ -995,7 +1013,8 @@ function WerkzeugPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
 function QuellenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
-  const byType = (type: string) => WIKI_SOURCES.filter(s => s.type === type);
+  const D = useWikiData();
+  const byType = (type: string) => D.sources.filter(s => s.type === type);
   return (
     <div>
       <Breadcrumb items={[
@@ -1028,6 +1047,7 @@ function QuellenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
 function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
   const t = useT();
+  const D = useWikiData();
   return (
     <div>
       <Breadcrumb items={[
@@ -1037,7 +1057,7 @@ function RegionenPage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
       <SectionHeader tag={t('Klimaregionen Österreichs', 'Climate regions of Austria')} title={t('7 Anbauregionen, 7 verschiedene Welten', '7 growing regions, 7 different worlds')} subtitle={t('Österreich reicht von USDA Zone 5a (Hochalpen) bis 7b (Burgenland/Wien). Was im pannonischen Osten perfekt wächst, scheitert im Waldviertel - und umgekehrt. Alle Klimadaten: GeoSphere Austria, Normalperiode 1991-2020.', 'Austria ranges from USDA zone 5a (high Alps) to 7b (Burgenland/Vienna). What grows perfectly in the Pannonian east fails in the Waldviertel · and vice versa. All climate data: GeoSphere Austria, standard period 1991–2020.')} />
 
       <div className="flex flex-col gap-3">
-        {CLIMATE_REGIONS.map(region => {
+        {D.regions.map(region => {
           const regionColor = region.id === 'pannonisch-nord' ? AMBER : region.id === 'wien-wienerwald' ? CYAN : '#15803d';
           return (
             <Collapsible
@@ -1163,6 +1183,8 @@ function RechnerCTA({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 
 // ── Main WikiView ─────────────────────────────────────────────────────────────
 export default function WikiView({ onSelectPlant }: { onSelectPlant?: (id: string) => void }) {
+  const { lang } = useLang();
+  const D = useWikiData();
   const [page, setPage] = useState<WikiPage>(() => hashToWikiPage(window.location.hash));
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -1174,14 +1196,23 @@ export default function WikiView({ onSelectPlant }: { onSelectPlant?: (id: strin
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
+  // On language change, rewrite the current hash to the same page in the new
+  // language so the URL matches (e.g. #wiki/pflanze/tomate ⇄ #wiki/plant/tomato).
+  useEffect(() => {
+    if (!window.location.hash.startsWith('#wiki')) return;
+    const current = hashToWikiPage(window.location.hash);
+    const next = wikiPageToHash(current, lang);
+    if (next !== window.location.hash) window.location.hash = next;
+  }, [lang]);
+
   const navigate = useCallback((p: WikiPage) => {
-    window.location.hash = wikiPageToHash(p);
+    window.location.hash = wikiPageToHash(p, lang);
     setPage(p);
     // Scroll the panel container (not window) to top
     let el = containerRef.current?.parentElement ?? null;
     while (el && getComputedStyle(el).overflowY !== 'auto') el = el.parentElement;
     if (el) el.scrollTop = 0;
-  }, []);
+  }, [lang]);
 
   return (
     <div
@@ -1192,17 +1223,17 @@ export default function WikiView({ onSelectPlant }: { onSelectPlant?: (id: strin
       {page.view === 'home'      && <HomePage       onNavigate={navigate} />}
       {page.view === 'grundlagen' && <GrundlagenPage onNavigate={navigate} />}
       {page.view === 'artikel'   && (() => {
-        const article = WIKI_ARTICLE_MAP[page.id];
+        const article = D.articleMap[page.id];
         return article ? <ArticleDetailPage article={article} onNavigate={navigate} /> : <GrundlagenPage onNavigate={navigate} />;
       })()}
       {page.view === 'pflanzen'  && <PflanzenLanding onNavigate={navigate} />}
       {page.view === 'pflanze'   && (() => {
-        const plant = WIKI_PLANTS.find(p => p.id === page.id);
+        const plant = D.plants.find(p => p.id === page.id);
         return plant ? <PlantDetailPage plant={plant} onNavigate={navigate} onSelectGrowth={onSelectPlant} /> : <HomePage onNavigate={navigate} />;
       })()}
       {page.view === 'kalender'  && <KalenderLanding onNavigate={navigate} />}
       {page.view === 'monat'     && (() => {
-        const month = MONTHLY_CALENDAR.find(m => m.month === page.month);
+        const month = D.months.find(m => m.month === page.month);
         return month ? <MonthDetailPage month={month} onNavigate={navigate} /> : <KalenderLanding onNavigate={navigate} />;
       })()}
       {page.view === 'glashaus'  && <GlashausPage    onNavigate={navigate} />}
