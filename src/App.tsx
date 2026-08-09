@@ -25,32 +25,21 @@ function hashSubId(hash: string): string | null {
 function SiteHeader() {
   const t = useT();
   return (
-    <header
-      style={{
-        borderBottom: '1px solid var(--c-border)',
-        background: 'var(--c-bg-soft)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 20,
-      }}
-    >
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0.85rem 1.5rem', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <a href="#wiki" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+    <header className="site-header">
+      <div className="site-header__inner">
+        <a href="#wiki" className="site-header__brand">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--c-green)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M12 2c3 4 6 5 6 9a6 6 0 0 1-12 0c0-4 3-5 6-9z" />
             <path d="M12 11v9" />
           </svg>
-          <span style={{ fontFamily: 'var(--f-title)', fontWeight: 700, fontSize: '1.15rem', color: 'var(--c-text)' }}>
-            {t('Garten-Wiki', 'Garden Wiki')}
-          </span>
+          <span className="site-header__title">{t('Garten-Wiki', 'Garden Wiki')}</span>
         </a>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div className="site-header__tools">
           <a
             href="https://ernterechner.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono"
-            style={{ fontSize: '0.7rem', color: 'var(--c-green-mid)', letterSpacing: '0.04em', textDecoration: 'none' }}
+            className="site-header__link"
           >
             {t('Ertragsrechner', 'Yield calculator')} →
           </a>
