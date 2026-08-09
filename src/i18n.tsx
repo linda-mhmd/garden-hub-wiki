@@ -27,6 +27,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
     try { localStorage.setItem('lang', l); } catch { /* ignore */ }
+    // Reflect the language in the URL query WITHOUT touching the hash route,
+    // so switching never changes your page and a shared link keeps its language.
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', l);
+      window.history.replaceState(null, '', url.toString());
+    } catch { /* ignore */ }
   }, []);
 
   const toggle = useCallback(() => setLang(lang === 'de' ? 'en' : 'de'), [lang, setLang]);

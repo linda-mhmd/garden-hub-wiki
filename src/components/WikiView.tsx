@@ -523,6 +523,7 @@ function HomePage({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
 }
 
 function PflanzenLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) {
+  const t = useT();
   const [filter, setFilter] = useState<'alle' | 'glashaus' | 'balkon' | 'frosthart'>('alle');
   const filtered = WIKI_PLANTS.filter(p => {
     if (filter === 'glashaus') return p.glashaus;
@@ -532,19 +533,19 @@ function PflanzenLanding({ onNavigate }: { onNavigate: (p: WikiPage) => void }) 
   });
 
   const filters = [
-    { id: 'alle' as const, label: 'Alle', color: 'var(--c-text)' },
-    { id: 'glashaus' as const, label: 'Glashaus', color: CYAN },
-    { id: 'balkon' as const, label: 'Balkon', color: GREEN },
-    { id: 'frosthart' as const, label: 'Frosthart', color: CYAN },
+    { id: 'alle' as const, label: t('Alle', 'All'), color: 'var(--c-text)' },
+    { id: 'glashaus' as const, label: t('Glashaus', 'Greenhouse'), color: CYAN },
+    { id: 'balkon' as const, label: t('Balkon', 'Balcony'), color: GREEN },
+    { id: 'frosthart' as const, label: t('Frosthart', 'Frost-hardy'), color: CYAN },
   ];
 
   return (
     <div>
       <Breadcrumb items={[
-        { label: 'Wiki', onClick: () => onNavigate({ view: 'home' }) },
-        { label: 'Pflanzenlexikon', color: AMBER },
+        { label: t('Wiki', 'Wiki'), onClick: () => onNavigate({ view: 'home' }) },
+        { label: t('Pflanzenlexikon', 'Plant encyclopedia'), color: AMBER },
       ]} />
-      <SectionHeader tag="Pflanzenlexikon" title={`${WIKI_PLANTS.length} Pflanzen für Österreich`} subtitle="Jede Pflanze mit wissenschaftlichem Namen, Anbauanleitung, Sortenempfehlung und Quellenangaben. Klicke für die Detailseite." />
+      <SectionHeader tag={t('Pflanzenlexikon', 'Plant encyclopedia')} title={t(`${WIKI_PLANTS.length} Pflanzen für Österreich`, `${WIKI_PLANTS.length} plants for Austria`)} subtitle={t('Jede Pflanze mit wissenschaftlichem Namen, Anbauanleitung, Sortenempfehlung und Quellenangaben. Klicke für die Detailseite.', 'Every plant with its scientific name, growing instructions, variety recommendations and sources. Tap for the detail page.')} />
 
       <div className="flex gap-1.5 mb-5 flex-wrap">
         {filters.map(f => (
